@@ -1,16 +1,15 @@
-import 'package:backpacking_indonesia/page/destination_specific/list_city.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class TopProvince extends StatelessWidget {
+class TopDestination extends StatelessWidget {
   final List<String> images;
-  final List<String> nameProvince;
+  final List<String> nameDestination;
   final String title;
   final double imageHeight;
   final double imageWidth;
-  TopProvince(
+  TopDestination(
       {this.images,
-      this.nameProvince,
+      this.nameDestination,
       this.title,
       this.imageHeight,
       this.imageWidth});
@@ -65,7 +64,7 @@ class TopProvince extends StatelessWidget {
                             )
                           ]),
                       child: GestureDetector(
-                        onTap: ()=>Get.to(ListCity()),
+                        onTap: ()=>{},
                           child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: Image(
@@ -80,7 +79,7 @@ class TopProvince extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 40.0),
-                        child: Text(nameProvince[index],
+                        child: Text(nameDestination[index],
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,

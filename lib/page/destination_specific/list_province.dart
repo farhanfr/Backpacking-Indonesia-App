@@ -22,7 +22,7 @@ class ListProvince extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    "Find your province destination",
+                    "Find Your Province Destination",
                     style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Poppins",

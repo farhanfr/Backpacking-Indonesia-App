@@ -1,16 +1,17 @@
-import 'package:backpacking_indonesia/page/destination_specific/list_city.dart';
+import 'package:backpacking_indonesia/page/data/dump_data.dart';
+import 'package:backpacking_indonesia/page/destination_specific/list_destination.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class TopProvince extends StatelessWidget {
-  final List<String> images;
-  final List<String> nameProvince;
+class TopCity extends StatelessWidget {
+ final List<String> images;
+  final List<String> nameCity;
   final String title;
   final double imageHeight;
   final double imageWidth;
-  TopProvince(
+  TopCity(
       {this.images,
-      this.nameProvince,
+      this.nameCity,
       this.title,
       this.imageHeight,
       this.imageWidth});
@@ -47,7 +48,7 @@ class TopProvince extends StatelessWidget {
           child: ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: 15.0),
               scrollDirection: Axis.horizontal,
-              itemCount: images.length,
+              itemCount: 5,
               itemBuilder: (BuildContext context, int index) {
                 return Stack(
                   children: <Widget>[
@@ -65,7 +66,7 @@ class TopProvince extends StatelessWidget {
                             )
                           ]),
                       child: GestureDetector(
-                        onTap: ()=>Get.to(ListCity()),
+                        onTap: () => Get.to(ListDestination()),
                           child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: Image(
@@ -80,7 +81,7 @@ class TopProvince extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 40.0),
-                        child: Text(nameProvince[index],
+                        child: Text(nameCity[index],
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,

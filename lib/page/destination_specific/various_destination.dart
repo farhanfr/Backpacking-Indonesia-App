@@ -1,19 +1,13 @@
-import 'package:backpacking_indonesia/page/destination_specific/list_city.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class VariousProvince extends StatelessWidget {
+class VariousDestination extends StatelessWidget {
   final List<String> images;
-  final List<String> nameProvince;
+  final List<String> nameDestination;
   final String title;
   final double imageHeight;
   final double imageWidth;
-  VariousProvince(
-      {this.images,
-      this.title,
-      this.imageHeight,
-      this.imageWidth,
-      this.nameProvince});
+  VariousDestination({this.images, this.title, this.imageHeight, this.imageWidth, this.nameDestination});
 
   @override
   Widget build(BuildContext context) {
@@ -64,16 +58,13 @@ class VariousProvince extends StatelessWidget {
                     ]),
                 child: Stack(
                   children: <Widget>[
-                    GestureDetector(
-                      onTap: () => Get.to(ListCity()),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image(
-                            image: AssetImage(images[index]),
-                            fit: BoxFit.cover,
-                          ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image(
+                          image: AssetImage(images[index]),
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
@@ -82,7 +73,7 @@ class VariousProvince extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 20.0),
-                        child: Text(nameProvince[index],
+                        child: Text(nameDestination[index],
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,
