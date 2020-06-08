@@ -1,10 +1,12 @@
 import 'package:backpacking_indonesia/data/dump_data.dart';
+import 'package:backpacking_indonesia/model/city_model.dart';
 import 'package:backpacking_indonesia/page/destination_specific/top_city.dart';
 import 'package:backpacking_indonesia/page/destination_specific/various_city.dart';
 import 'package:flutter/material.dart';
 
 class ListCity extends StatefulWidget {
-
+  final int provinceId;
+  ListCity({this.provinceId});
   @override
   _ListCityState createState() => _ListCityState();
 }
@@ -20,7 +22,17 @@ class _ListCityState extends State<ListCity> {
         elevation: 0.0,
         iconTheme: new IconThemeData(color: Colors.black),
       ),
-      body: SingleChildScrollView(
+      body: CityModel(index: widget.provinceId)
+    );
+  }
+}
+
+class ListItemCity extends StatelessWidget {
+  final List listCity;
+  ListItemCity({this.listCity});
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
               child: Container(
           child: Column(
             children: <Widget>[
@@ -48,16 +60,14 @@ class _ListCityState extends State<ListCity> {
               ),
               SizedBox(height: 20.0),
               VariousCity(
-                images: topCity,
                 title: "List of City",
                 imageHeight: 150.0,
-                nameCity: nameCity,
+                dataCity: listCity,
               )
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }
 

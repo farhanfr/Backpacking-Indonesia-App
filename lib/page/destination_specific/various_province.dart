@@ -49,6 +49,7 @@ class VariousProvince extends StatelessWidget {
             // scrollDirection: Ax,
             itemCount: data.length,
             itemBuilder: (BuildContext context, int index) {
+              // print("CEKK ID PROVISI PADA VARIOUS PROVINCE ${data[index]['id']}");
               return Container(
                 height: imageHeight,
                 margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -65,7 +66,7 @@ class VariousProvince extends StatelessWidget {
                 child: Stack(
                   children: <Widget>[
                     GestureDetector(
-                      onTap: () => Get.to(ListCity()),
+                      onTap: () => Get.to(ListCity(provinceId: data[index]['id'])),
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         child: ClipRRect(

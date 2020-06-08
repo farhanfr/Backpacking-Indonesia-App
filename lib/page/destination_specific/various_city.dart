@@ -1,12 +1,15 @@
+import 'package:backpacking_indonesia/page/destination_specific/list_destination.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class VariousCity extends StatelessWidget {
-  final List<String> images;
-  final List<String> nameCity;
+  // final List<String> images;
+  // final List<String> nameCity;
+  final List dataCity;
   final String title;
   final double imageHeight;
   final double imageWidth;
-  VariousCity({this.images, this.title, this.imageHeight, this.imageWidth, this.nameCity});
+  VariousCity({this.title, this.imageHeight, this.imageWidth, this.dataCity});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +43,7 @@ class VariousCity extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 15.0),
             // scrollDirection: Ax,
-            itemCount: images.length,
+            itemCount: dataCity.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 height: imageHeight,
@@ -57,13 +60,16 @@ class VariousCity extends StatelessWidget {
                     ]),
                 child: Stack(
                   children: <Widget>[
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image(
-                          image: AssetImage(images[index]),
-                          fit: BoxFit.cover,
+                    GestureDetector(
+                      onTap: () => Get.to(ListDestination()),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.network(
+                            "http://192.168.1.5:8000/img/${dataCity[index]['photo']}",
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
@@ -72,7 +78,7 @@ class VariousCity extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 20.0),
-                        child: Text(nameCity[index],
+                        child: Text(dataCity[index]['name_city'],
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,
