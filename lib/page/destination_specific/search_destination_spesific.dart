@@ -3,58 +3,65 @@ import 'package:backpacking_indonesia/page/destination_specific/list_province.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SearchDestinationSpesific extends StatelessWidget {
+class SearchDestinationSpesific extends StatefulWidget {
+  
+  @override
+  _SearchDestinationSpesificState createState() =>
+      _SearchDestinationSpesificState();
+}
+
+class _SearchDestinationSpesificState extends State<SearchDestinationSpesific> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-              child: Container(
+        child: Container(
           padding: EdgeInsets.symmetric(horizontal: 15.0),
-          child: Column(
-            children: <Widget>[
-              Text("How to Get Specific Destination",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 28.0)),
-              HowToSearch(
-                img: "assets/images/caugh.png",
-                titleText: "1. Find the province",
-                descText:
-                    "Since the start of the coronavirus outbreak some places have fully embraced wearing facemasks",
-              ),
-              HowToSearch(
-                img: "assets/images/caugh.png",
-                titleText: "2. Find the city",
-                descText:
-                    "Since the start of the coronavirus outbreak some places have fully embraced wearing facemasks",
-              ),
-              HowToSearch(
-                img: "assets/images/caugh.png",
-                titleText: "3. Find & Get Destination",
-                descText:
-                    "Since the start of the coronavirus outbreak some places have fully embraced wearing facemasks",
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              ButtonTheme(
+          child: Column(children: <Widget>[
+            Text("How to Get Specific Destination",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28.0)),
+            HowToSearch(
+              img: "assets/images/caugh.png",
+              titleText: "1. Find the province",
+              descText:
+                  "Since the start of the coronavirus outbreak some places have fully embraced wearing facemasks",
+            ),
+            HowToSearch(
+              img: "assets/images/caugh.png",
+              titleText: "2. Find the city",
+              descText:
+                  "Since the start of the coronavirus outbreak some places have fully embraced wearing facemasks",
+            ),
+            HowToSearch(
+              img: "assets/images/caugh.png",
+              titleText: "3. Find & Get Destination",
+              descText:
+                  "Since the start of the coronavirus outbreak some places have fully embraced wearing facemasks",
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            ButtonTheme(
                 minWidth: MediaQuery.of(context).size.width,
                 height: 50.0,
                 child: RaisedButton.icon(
-                  icon: Icon(Icons.search,color: Colors.white,),
-                    label:
-                        Text("Search Now", style: TextStyle(color: Colors.white)),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0)),
-                    color: Colors.red[600],
-                    onPressed: ()=>Get.to(ListProvince()),
-              )
-              ) 
-            ]
-          ),
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
+                  label:
+                      Text("Search Now", style: TextStyle(color: Colors.white)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                  color: Colors.red[600],
+                  onPressed: () => Get.to(ListProvince()),
+                ))
+          ]),
         ),
       ),
     );

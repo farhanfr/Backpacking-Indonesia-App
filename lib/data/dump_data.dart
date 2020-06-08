@@ -103,3 +103,30 @@ final List<String> newDestination = [
 final List<String> nameNewDestination = [
   'Pantai baru1','Pantai bar 2','Pantai baru 3','Pantai baru 4','Pantai baru 5',
 ];
+
+final List<String> nameSubDestination = [
+  'Malang2','Denpasar2','Batu2','Magetan2','Semarang2',
+  'Malang2','Denpasar2','Batu2','Magetan2','Semarang2',
+  'Malang2','Denpasar2','Batu2','Magetan2','Semarang2',
+  'Malang2','Denpasar2','Batu2','Magetan2','Semarang2'
+];
+
+final List<String> subDestination = [
+  'assets/images/firstopen.jpg',
+  'assets/images/middle.png',
+  'assets/images/east.jpg',
+  'assets/images/west.png',
+  'assets/images/firstopen.jpg',
+  'assets/images/middle.png',
+  'assets/images/east.jpg',
+  'assets/images/west.png',
+  'assets/images/firstopen.jpg',
+  'assets/images/middle.png',
+  'assets/images/east.jpg',
+  'assets/images/west.png',
+  'assets/images/firstopen.jpg',
+  'assets/images/middle.png',
+  'assets/images/east.jpg',
+  'assets/images/west.png'
+  
+];

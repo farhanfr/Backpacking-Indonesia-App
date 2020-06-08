@@ -1,7 +1,9 @@
-import 'package:backpacking_indonesia/page/data/dump_data.dart';
+import 'package:backpacking_indonesia/data/dump_data.dart';
 import 'package:backpacking_indonesia/page/destination_specific/top_destination.dart';
 import 'package:backpacking_indonesia/page/destination_specific/various_destination.dart';
+import 'package:backpacking_indonesia/page/detail_destination.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ListDestination extends StatefulWidget {
   @override
@@ -35,7 +37,7 @@ class _ListDestinationState extends State<ListDestination> {
         );
       },
       child: GestureDetector(
-        onTap: () => () {},
+        onTap: () =>Get.to(DetailDestination(nameDestination: nameDestination,newDestination: newDestination,index: index,)),
         child: Stack(
           children: <Widget>[
             Center(
@@ -99,7 +101,7 @@ class _ListDestinationState extends State<ListDestination> {
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
-                "Find Your Province Destination",
+                "Find & Get Your Destination",
                 style: TextStyle(
                     color: Colors.black,
                     fontFamily: "Poppins",

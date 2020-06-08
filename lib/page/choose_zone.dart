@@ -1,4 +1,5 @@
 import 'package:backpacking_indonesia/page/main_parent.dart';
+import 'package:backpacking_indonesia/storing/shared_pref.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,8 @@ final List<String> titleZone = [
   'East of Indonesia'
 ];
 
+final List<int> chooseZoneIndicator = [1, 2, 3];
+
 final List<String> imgZone = [
   'assets/images/westtracer.png',
   'assets/images/middletracer.png',
@@ -29,7 +32,8 @@ final List<Widget> imageSliders = imgList
                 // borderRadius: BorderRadius.all(Radius.circular(5.0)),
                 child: Stack(
               children: <Widget>[
-                Image.asset('${imgList[imgList.indexOf(item)]}',fit: BoxFit.cover, width: 1000.0, height: 1000.0),
+                Image.asset('${imgList[imgList.indexOf(item)]}',
+                    fit: BoxFit.cover, width: 1000.0, height: 1000.0),
                 Positioned(
                   bottom: 0.0,
                   left: 0.0,
@@ -60,13 +64,12 @@ final List<Widget> imageSliders = imgList
                   ),
                 ),
                 Positioned(
-                  child: Center(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Image.asset("${imgZone[imgList.indexOf(item)]}"),
-                    ),
-                  )
-                ),
+                    child: Center(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Image.asset("${imgZone[imgList.indexOf(item)]}"),
+                  ),
+                )),
                 Positioned.fill(
                     bottom: 100.0,
                     child: Align(
@@ -81,7 +84,13 @@ final List<Widget> imageSliders = imgList
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                               side: BorderSide(color: Colors.white)),
-                          onPressed: ()=>Get.to(MainParent())),
+                          onPressed: () {
+                            SharedPref().removeValues("IndexChooseZone");
+                            SharedPref().addIntToSF("IndexChooseZone",
+                                chooseZoneIndicator[imgList.indexOf(item)]);
+                            // print("SHARED PREF TERSEDIA : 1");
+                            Get.to(MainParent());
+                          }),
                     ))
               ],
             )),
@@ -89,7 +98,19 @@ final List<Widget> imageSliders = imgList
         ))
     .toList();
 
-class ChooseZone extends StatelessWidget {
+class ChooseZone extends StatefulWidget {
+  @override
+  _ChooseZoneState createState() => _ChooseZoneState();
+}
+
+class _ChooseZoneState extends State<ChooseZone> {
+  @override
+  void initState() {
+    super.initState();
+    // SharedPref().removeValues("IndexChooseZone");
+    SharedPref().checkValues("IndexChooseZone");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

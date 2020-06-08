@@ -1,4 +1,3 @@
-import 'package:backpacking_indonesia/page/data/dump_data.dart';
 import 'package:backpacking_indonesia/page/destination_specific/list_destination.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

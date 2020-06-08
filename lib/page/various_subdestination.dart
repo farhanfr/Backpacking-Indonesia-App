@@ -1,45 +1,36 @@
 import 'package:flutter/material.dart';
 
-class TopDestination extends StatelessWidget {
+class VariousSubDestination extends StatelessWidget {
   final List<String> images;
-  final List<String> nameDestination;
+  final List<String> nameSubDestination;
   final String title;
   final double imageHeight;
   final double imageWidth;
-  TopDestination(
+  VariousSubDestination(
       {this.images,
-      this.nameDestination,
       this.title,
       this.imageHeight,
-      this.imageWidth});
+      this.imageWidth,
+      this.nameSubDestination});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                title,
-                style: TextStyle(
-                    fontSize: 20.0,
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.bold),
-              ),
-              // GestureDetector(
-              //   onTap: () => print('View $title'),
-              //   child: Icon(
-              //     Icons.arrow_forward,
-              //     color: Colors.black,
-              //     size: 30.0,
-              //   ),
-              // ),
-            ],
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            title,
+            style: TextStyle(
+                fontSize: 20.0,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.bold),
           ),
         ),
+      ),
+        
         Container(
           height: imageHeight,
           child: ListView.builder(
@@ -63,8 +54,8 @@ class TopDestination extends StatelessWidget {
                             )
                           ]),
                       child: GestureDetector(
-                        onTap: ()=>{},
-                          child: ClipRRect(
+                        onTap: () => {},
+                        child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: Image(
                             image: AssetImage(images[index]),
@@ -78,7 +69,7 @@ class TopDestination extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 40.0),
-                        child: Text(nameDestination[index],
+                        child: Text(nameSubDestination[index],
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,

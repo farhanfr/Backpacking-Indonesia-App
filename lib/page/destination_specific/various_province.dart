@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class VariousProvince extends StatelessWidget {
+  final List data;
   final List<String> images;
-  final List<String> nameProvince;
+  // final List<String> nameProvince;
   final String title;
   final double imageHeight;
   final double imageWidth;
   VariousProvince(
-      {this.images,
-      this.title,
+      {this.title,
       this.imageHeight,
       this.imageWidth,
-      this.nameProvince});
+      this.data, this.images});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class VariousProvince extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 15.0),
             // scrollDirection: Ax,
-            itemCount: images.length,
+            itemCount: data.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 height: imageHeight,
@@ -70,10 +70,9 @@ class VariousProvince extends StatelessWidget {
                         width: MediaQuery.of(context).size.width,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
-                          child: Image(
-                            image: AssetImage(images[index]),
-                            fit: BoxFit.cover,
-                          ),
+                          child: Image.network("http://192.168.1.5:8000/img/${data[index]['photo']}",
+                          fit: BoxFit.cover,
+                          )
                         ),
                       ),
                     ),
@@ -82,7 +81,7 @@ class VariousProvince extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 20.0),
-                        child: Text(nameProvince[index],
+                        child: Text(data[index]['name_province'],
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,

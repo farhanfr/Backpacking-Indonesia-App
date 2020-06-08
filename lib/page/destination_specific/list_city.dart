@@ -1,9 +1,15 @@
+import 'package:backpacking_indonesia/data/dump_data.dart';
 import 'package:backpacking_indonesia/page/destination_specific/top_city.dart';
 import 'package:backpacking_indonesia/page/destination_specific/various_city.dart';
 import 'package:flutter/material.dart';
-import 'package:backpacking_indonesia/page/data/dump_data.dart';
 
-class ListCity extends StatelessWidget {
+class ListCity extends StatefulWidget {
+
+  @override
+  _ListCityState createState() => _ListCityState();
+}
+
+class _ListCityState extends State<ListCity> {
 
   @override
   Widget build(BuildContext context) {

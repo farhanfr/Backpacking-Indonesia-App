@@ -1,53 +1,67 @@
-import 'package:backpacking_indonesia/page/data/dump_data.dart';
+import 'package:backpacking_indonesia/data/dump_data.dart';
+import 'package:backpacking_indonesia/model/province_model.dart';
 import 'package:backpacking_indonesia/page/destination_specific/top_province.dart';
 import 'package:backpacking_indonesia/page/destination_specific/various_province.dart';
 import 'package:flutter/material.dart';
 
-class ListProvince extends StatelessWidget {
+class ListProvince extends StatefulWidget {
+  @override
+  _ListProvinceState createState() => _ListProvinceState();
+}
+
+class _ListProvinceState extends State<ListProvince> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0.0,
-        iconTheme: new IconThemeData(color: Colors.black),
-      ),
-      body: SingleChildScrollView(
-              child: Container(
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Find Your Province Destination",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Poppins",
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.bold),
-                  ),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          iconTheme: new IconThemeData(color: Colors.black),
+        ),
+        body: ProvinceModel());
+  }
+}
+
+class ListItemProvince extends StatelessWidget {
+  final List list;
+  ListItemProvince({this.list});
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  "Find Your Province Destination",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Poppins",
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
-              SearchEngineProvince(),
-              TopProvince(
+            ),
+            SearchEngineProvince(),
+            TopProvince(
+              images: topProvince,
+              nameProvince: nameProvince,
+              title: "Top 5 Province",
+              imageHeight: 200.0,
+              imageWidth: 300.0,
+            ),
+            SizedBox(height: 20.0),
+            VariousProvince(
                 images: topProvince,
-                nameProvince: nameProvince,
-                title: "Top 5 Province",
-                imageHeight: 200.0,
-                imageWidth: 300.0,
-              ),
-              SizedBox(height: 20.0),
-              VariousProvince(
-                images: topProvince,
+                data: list,
                 title: "List of Province",
-                imageHeight: 150.0,
-                nameProvince: nameProvince,
-              )
-            ],
-          ),
+                imageHeight: 150.0)
+          ],
         ),
       ),
     );

@@ -25,6 +25,9 @@ dependencies:
     sdk: flutter
   carousel_slider: ^2.1.0
   get: ^2.10.1
+  http: ^0.12.1
+  shared_preferences: ^0.5.7+3
+  back_button_interceptor: ^4.2.4
   
 
 
