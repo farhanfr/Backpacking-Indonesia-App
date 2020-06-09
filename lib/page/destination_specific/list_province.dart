@@ -12,6 +12,12 @@ class ListProvince extends StatefulWidget {
 class _ListProvinceState extends State<ListProvince> {
 
   @override
+  void initState() {
+    super.initState();
+    ProvinceModel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
@@ -20,13 +26,15 @@ class _ListProvinceState extends State<ListProvince> {
           elevation: 0.0,
           iconTheme: new IconThemeData(color: Colors.black),
         ),
-        body: ProvinceModel());
+        body: ProvinceModel()
+        );
   }
 }
 
 class ListItemProvince extends StatelessWidget {
   final List list;
-  ListItemProvince({this.list});
+  final List list2;
+  ListItemProvince({this.list, this.list2});
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -49,8 +57,7 @@ class ListItemProvince extends StatelessWidget {
             ),
             SearchEngineProvince(),
             TopProvince(
-              images: topProvince,
-              nameProvince: nameProvince,
+              dataTopProvince: list2,
               title: "Top 5 Province",
               imageHeight: 200.0,
               imageWidth: 300.0,

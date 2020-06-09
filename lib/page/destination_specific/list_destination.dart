@@ -1,11 +1,18 @@
+import 'dart:convert';
+
 import 'package:backpacking_indonesia/data/dump_data.dart';
+import 'package:backpacking_indonesia/model/destination_model.dart';
+import 'package:backpacking_indonesia/model/destination_services.dart';
 import 'package:backpacking_indonesia/page/destination_specific/top_destination.dart';
 import 'package:backpacking_indonesia/page/destination_specific/various_destination.dart';
 import 'package:backpacking_indonesia/page/detail_destination.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class ListDestination extends StatefulWidget {
+  final int cityId;
+  ListDestination({this.cityId});
   @override
   _ListDestinationState createState() => _ListDestinationState();
 }
@@ -13,13 +20,44 @@ class ListDestination extends StatefulWidget {
 class _ListDestinationState extends State<ListDestination> {
   PageController _pageController;
 
+  List<DestinationModel> _list = [];
+  var loading = false;
+  var getStatusResp = 0;
+  Future<Null> getDataCity() async {
+    // print("CEKKK FUTURE CITY MODEL ${widget.index}");
+    final response = await http.get(
+        "http://192.168.1.5:8000/api/v1/city/get/destination/city/?city_id=${widget.cityId}");
+    // Map<String, dynamic> map = json.decode(response.body);
+    // List<dynamic> data = map["data"];
+    setState(() {
+      loading = true;
+    });
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      for (Map i in data) {
+        _list.add(DestinationModel.fromJson(i));
+      }
+      setState(() {
+      loading = false;
+      getStatusResp = response.statusCode;
+    });
+      print("OEEEE $data");
+    }
+    else{
+      print("GAGAL");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    getDataCity();
     _pageController = PageController(initialPage: 1, viewportFraction: 0.8);
   }
 
   _destinationSelector(int index) {
+    final getDataNewDestination = _list[index];
     return AnimatedBuilder(
       animation: _pageController,
       builder: (BuildContext context, Widget widget) {
@@ -37,7 +75,12 @@ class _ListDestinationState extends State<ListDestination> {
         );
       },
       child: GestureDetector(
-        onTap: () =>Get.to(DetailDestination(nameDestination: nameDestination,newDestination: newDestination,index: index,)),
+        onTap: () => Get.to(DetailDestination(
+            nameDestination: getDataNewDestination.name_destination,
+            descDestination: getDataNewDestination.desc_destination,
+            imgHeaderDetail: getDataNewDestination.photo,
+            destinationId: getDataNewDestination.id,
+            statusResp: getStatusResp)),
         child: Stack(
           children: <Widget>[
             Center(
@@ -54,16 +97,17 @@ class _ListDestinationState extends State<ListDestination> {
                   ],
                 ),
                 child: Center(
-                  child: Hero(
-                      tag: newDestination[index],
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image(
-                          image: AssetImage(newDestination[index]),
-                          height: 220.0,
-                          fit: BoxFit.cover,
+                  child:  Hero(
+                    tag: "new_destination",
+                                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image(
+                            image: AssetImage(newDestination[index]),
+                            height: 220.0,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      )),
+                  ),
                 ),
               ),
             ),
@@ -73,7 +117,7 @@ class _ListDestinationState extends State<ListDestination> {
                 child: Container(
                   width: 250.0,
                   child: Text(
-                    nameNewDestination[index].toUpperCase(),
+                    getDataNewDestination.name_destination,
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 20.0,
@@ -89,63 +133,64 @@ class _ListDestinationState extends State<ListDestination> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          iconTheme: new IconThemeData(color: Colors.black),
+        elevation: 0.0,
+        iconTheme: new IconThemeData(color: Colors.black),
+      ),
+      body: ListView(children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              "Find & Get Your Destination",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Poppins",
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
         ),
-        body: ListView(children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                "Find & Get Your Destination",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Poppins",
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
+        SearchEngineDestination(),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: Text("New Destination",
+              style: TextStyle(
+                  fontSize: 20.0,
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.bold)),
+        ),
+        Container(
+          height: 280.0,
+          width: double.infinity,
+          child: 
+          loading ? Center(child: CircularProgressIndicator()) :
+          PageView.builder(
+            controller: _pageController,
+            itemCount: _list.length,
+            itemBuilder: (BuildContext context, int index) {
+              return _destinationSelector(index);
+            },
           ),
-          SearchEngineDestination(),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text("New Destination",
-                style: TextStyle(
-                    fontSize: 20.0,
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.bold)),
-          ),
-          Container(
-            height: 280.0,
-            width: double.infinity,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: 5,
-              itemBuilder: (BuildContext context, int index) {
-                return _destinationSelector(index);
-              },
-            ),
-          ),
-          SizedBox(height: 20.0),
-          TopDestination(
-            images: topDestination,
-            nameDestination: nameDestination,
-            title: "Top 5 Destination",
-            imageHeight: 200.0,
-            imageWidth: 300.0,
-          ),
-          SizedBox(height: 20.0),
-          VariousDestination(
-            images: topCity,
-            title: "List of City",
-            imageHeight: 150.0,
-            nameDestination: nameDestination,
-          )
-        ]));
+        ),
+        SizedBox(height: 20.0),
+        TopDestination( 
+          cityId: widget.cityId,
+          title: "Top 5 Destination",
+          imageHeight: 200.0,
+          imageWidth: 300.0,
+        ),
+        SizedBox(height: 20.0),
+        VariousDestination(
+          title: "List of Destination",
+          imageHeight: 150.0,
+          cityId: widget.cityId,
+        )
+      ]),
+    );
   }
 }
 

@@ -35,15 +35,23 @@ class _ProvinceModelState extends State<ProvinceModel> {
     return data;
   }
 
+  Future<List> topProvince() async {
+    final response = await http.get(
+        "http://192.168.1.5:8000/api/v1/city/get/city/province/?province_id=1");
+    Map<String, dynamic> map = json.decode(response.body);
+    List<dynamic> data = map["data"];
+    return data;
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List>(
-      future: getDataProvince(),
+      future: Future.wait([getDataProvince(),topProvince()]),
       builder: (context, snapshot) {
         if (snapshot.hasError) print(snapshot.error);
         print(snapshot.data);
         return snapshot.hasData
-            ? ListItemProvince(list: snapshot.data)
+            ? ListItemProvince(list: snapshot.data[0],list2: snapshot.data[1])
             : Center(
                 child: CircularProgressIndicator(),
               );
@@ -51,3 +59,5 @@ class _ProvinceModelState extends State<ProvinceModel> {
     );
   }
 }
+
+

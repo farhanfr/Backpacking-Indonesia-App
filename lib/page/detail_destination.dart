@@ -4,12 +4,11 @@ import 'package:backpacking_indonesia/page/widget/circullar_clipper.dart';
 import 'package:flutter/material.dart';
 
 class DetailDestination extends StatefulWidget {
-  final List<String> newDestination;
-  final List<String> nameDestination;
-  final int index;
+  final String imgHeaderDetail,nameDestination,descDestination;  
+  final int destinationId,statusResp;
 
   DetailDestination(
-      {Key key, this.newDestination, this.nameDestination, this.index})
+      {Key key, this.imgHeaderDetail, this.nameDestination, this.descDestination, this.destinationId, this.statusResp})
       : super(key: key);
 
   @override
@@ -17,6 +16,24 @@ class DetailDestination extends StatefulWidget {
 }
 
 class _DetailDestinationState extends State<DetailDestination> {
+
+  var loading = false;
+  _checkInData(){
+    setState(() {
+      loading = true;
+    });
+    if (widget.statusResp == 200) {
+      setState(() {
+      loading = false;
+    });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkInData();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,25 +42,28 @@ class _DetailDestinationState extends State<DetailDestination> {
       //   backgroundColor: Colors.transparent,
       //   elevation: 0.0,
       // ),
-      body: ListView(
+      body: 
+      loading ? Center(child: CircularProgressIndicator())  :
+      ListView(
         children: <Widget>[
           Stack(
             children: <Widget>[
               Container(
                 transform: Matrix4.translationValues(0.0, -50.0, 0.0),
                 child: Hero(
-                  tag: widget.newDestination[widget.index],
+                  tag: "new_destination",
                   child: ClipShadowPath(
                     clipper: CircularClipper(),
                     shadow: Shadow(blurRadius: 20.0),
-                    child: Image(
+                    child: Image.network(
+                       "http://192.168.1.5:8000/img/${widget.imgHeaderDetail}",
                       height: 400.0,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      image: AssetImage(widget.newDestination[widget.index]),
                     ),
                   ),
                 ),
+                
               ),
               Positioned.fill(
                 bottom: 20.0,
@@ -69,7 +89,7 @@ class _DetailDestinationState extends State<DetailDestination> {
             // transform: Matrix4.translationValues(0.0, -30.0, 0.0),
             child: Column(
               children: <Widget>[
-                Text(widget.nameDestination[widget.index],
+                Text(widget.nameDestination,
                     style: TextStyle(
                         fontFamily: "Poppins",
                         fontSize: 32,
@@ -80,7 +100,7 @@ class _DetailDestinationState extends State<DetailDestination> {
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
                     child: Text(
-                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer",
+                      widget.descDestination,
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                         fontFamily: "Poppins",

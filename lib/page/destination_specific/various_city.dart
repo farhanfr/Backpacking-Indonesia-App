@@ -61,7 +61,7 @@ class VariousCity extends StatelessWidget {
                 child: Stack(
                   children: <Widget>[
                     GestureDetector(
-                      onTap: () => Get.to(ListDestination()),
+                      onTap: () => Get.to(ListDestination(cityId: dataCity[index]['id'],)),
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         child: ClipRRect(

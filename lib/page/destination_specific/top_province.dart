@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class TopProvince extends StatelessWidget {
-  final List<String> images;
-  final List<String> nameProvince;
+  // final List<String> images;
+  // final List<String> nameProvince;
+  final List dataTopProvince;
   final String title;
   final double imageHeight;
   final double imageWidth;
   TopProvince(
-      {this.images,
-      this.nameProvince,
+      {this.dataTopProvince,
       this.title,
       this.imageHeight,
       this.imageWidth});
@@ -47,7 +47,7 @@ class TopProvince extends StatelessWidget {
           child: ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: 15.0),
               scrollDirection: Axis.horizontal,
-              itemCount: images.length,
+              itemCount: dataTopProvince.length,
               itemBuilder: (BuildContext context, int index) {
                 return Stack(
                   children: <Widget>[
@@ -68,10 +68,9 @@ class TopProvince extends StatelessWidget {
                         onTap: ()=>Get.to(ListCity()),
                           child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
-                          child: Image(
-                            image: AssetImage(images[index]),
-                            fit: BoxFit.cover,
-                          ),
+                          child: Image.network("http://192.168.1.5:8000/img/${dataTopProvince[index]['photo']}",
+                          fit: BoxFit.cover,
+                          )
                         ),
                       ),
                     ),
@@ -80,7 +79,7 @@ class TopProvince extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 40.0),
-                        child: Text(nameProvince[index],
+                        child: Text("a",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,

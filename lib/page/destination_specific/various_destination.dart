@@ -1,12 +1,64 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class VariousDestination extends StatelessWidget {
-  final List<String> images;
-  final List<String> nameDestination;
+import 'package:backpacking_indonesia/model/destination_model.dart';
+import 'package:backpacking_indonesia/page/detail_destination.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+
+class VariousDestination extends StatefulWidget {
+  // final List<String> images;
+  // final List<String> nameDestination;
+  final List dataDestination;
   final String title;
   final double imageHeight;
   final double imageWidth;
-  VariousDestination({this.images, this.title, this.imageHeight, this.imageWidth, this.nameDestination});
+  final int cityId;
+  VariousDestination(
+      {this.title,
+      this.imageHeight,
+      this.imageWidth,
+      this.dataDestination, this.cityId,
+      });
+
+  @override
+  _VariousDestinationState createState() => _VariousDestinationState();
+}
+
+class _VariousDestinationState extends State<VariousDestination> {
+  
+  List<DestinationModel> _list = [];
+  var loading = false;
+  Future<Null> getDataCity() async {
+    // print("CEKKK FUTURE CITY MODEL ${widget.index}");
+    final response = await http.get(
+        "http://192.168.1.5:8000/api/v1/city/get/destination/city/?city_id=${widget.cityId}");
+    // Map<String, dynamic> map = json.decode(response.body);
+    // List<dynamic> data = map["data"];
+    setState(() {
+      loading = true;
+    });
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      for (Map i in data) {
+        _list.add(DestinationModel.fromJson(i));
+      }
+      setState(() {
+      loading = false;
+    });
+      print(data);
+    }
+    else{
+      print("GAGAL");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDataCity();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +70,7 @@ class VariousDestination extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                title,
+                widget.title,
                 style: TextStyle(
                     fontSize: 20.0,
                     fontFamily: "Poppins",
@@ -35,15 +87,17 @@ class VariousDestination extends StatelessWidget {
             ],
           ),
         ),
+        loading ? Center(child: CircularProgressIndicator()) :
         ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 15.0),
             // scrollDirection: Ax,
-            itemCount: images.length,
+            itemCount: _list.length,
             itemBuilder: (BuildContext context, int index) {
+              final x = _list[index];
               return Container(
-                height: imageHeight,
+                height: widget.imageHeight,
                 margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
@@ -57,13 +111,20 @@ class VariousDestination extends StatelessWidget {
                     ]),
                 child: Stack(
                   children: <Widget>[
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image(
-                          image: AssetImage(images[index]),
-                          fit: BoxFit.cover,
+                    GestureDetector(
+                      onTap: () => Get.to(DetailDestination(
+                        // nameDestination: widget.nameDestination,
+                        // newDestination: widget.images,
+                        // index: index,
+                      )),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.network(
+                            "http://192.168.1.5:8000/img/${x.photo}",
+                              fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
@@ -72,7 +133,7 @@ class VariousDestination extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 20.0),
-                        child: Text(nameDestination[index],
+                        child: Text(x.city.name_city,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,

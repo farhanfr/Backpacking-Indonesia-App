@@ -1,17 +1,55 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class TopDestination extends StatelessWidget {
-  final List<String> images;
-  final List<String> nameDestination;
+import 'package:backpacking_indonesia/model/destination_model.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class TopDestination extends StatefulWidget {
+  // final List<String> images;
+  // final List<String> nameDestination;
+  final int cityId;
   final String title;
   final double imageHeight;
   final double imageWidth;
-  TopDestination(
-      {this.images,
-      this.nameDestination,
-      this.title,
-      this.imageHeight,
-      this.imageWidth});
+  TopDestination({this.title, this.imageHeight, this.imageWidth, this.cityId});
+
+  @override
+  _TopDestinationState createState() => _TopDestinationState();
+}
+
+class _TopDestinationState extends State<TopDestination> {
+  List<DestinationModel> _list = [];
+  var loading = false;
+  Future<Null> getDataCity() async {
+    // print("CEKKK FUTURE CITY MODEL ${widget.index}");
+    final response = await http.get(
+        "http://192.168.1.5:8000/api/v1/city/get/destination/city/?city_id=${widget.cityId}");
+    // Map<String, dynamic> map = json.decode(response.body);
+    // List<dynamic> data = map["data"];
+    setState(() {
+      loading = true;
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      for (Map i in data) {
+        _list.add(DestinationModel.fromJson(i));
+      }
+      setState(() {
+        loading = false;
+      });
+      print(data);
+    } else {
+      print("GAGAL");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDataCity();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +61,7 @@ class TopDestination extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                title,
+                widget.title,
                 style: TextStyle(
                     fontSize: 20.0,
                     fontFamily: "Poppins",
@@ -41,18 +79,21 @@ class TopDestination extends StatelessWidget {
           ),
         ),
         Container(
-          height: imageHeight,
-          child: ListView.builder(
+          height: widget.imageHeight,
+          child: 
+          loading ? Center(child: CircularProgressIndicator()) : 
+          ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: 15.0),
               scrollDirection: Axis.horizontal,
-              itemCount: images.length,
+              itemCount: _list.length,
               itemBuilder: (BuildContext context, int index) {
+                final getDataTopDestination = _list[index];
                 return Stack(
                   children: <Widget>[
                     Container(
                       margin: EdgeInsets.symmetric(
                           horizontal: 10.0, vertical: 20.0),
-                      width: imageWidth,
+                      width: widget.imageWidth,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           boxShadow: [
@@ -63,11 +104,11 @@ class TopDestination extends StatelessWidget {
                             )
                           ]),
                       child: GestureDetector(
-                        onTap: ()=>{},
-                          child: ClipRRect(
+                        onTap: () => {},
+                        child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
-                          child: Image(
-                            image: AssetImage(images[index]),
+                          child: Image.network(
+                            "http://192.168.1.5:8000/img/${getDataTopDestination.photo}",
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -78,7 +119,7 @@ class TopDestination extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 40.0),
-                        child: Text(nameDestination[index],
+                        child: Text(getDataTopDestination.name_destination,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,
