@@ -1,17 +1,19 @@
 import 'dart:convert';
 
 import 'package:backpacking_indonesia/model/destination_model.dart';
+import 'package:backpacking_indonesia/page/detail_destination.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class TopDestination extends StatefulWidget {
   // final List<String> images;
   // final List<String> nameDestination;
-  final int cityId;
+  final int cityId,getStatusResp;
   final String title;
   final double imageHeight;
   final double imageWidth;
-  TopDestination({this.title, this.imageHeight, this.imageWidth, this.cityId});
+  TopDestination({this.title, this.imageHeight, this.imageWidth, this.cityId, this.getStatusResp});
 
   @override
   _TopDestinationState createState() => _TopDestinationState();
@@ -20,7 +22,7 @@ class TopDestination extends StatefulWidget {
 class _TopDestinationState extends State<TopDestination> {
   List<DestinationModel> _list = [];
   var loading = false;
-  Future<Null> getDataCity() async {
+  Future<Null> getTopDestination() async {
     // print("CEKKK FUTURE CITY MODEL ${widget.index}");
     final response = await http.get(
         "http://192.168.1.5:8000/api/v1/city/get/destination/city/?city_id=${widget.cityId}");
@@ -48,7 +50,7 @@ class _TopDestinationState extends State<TopDestination> {
   @override
   void initState() {
     super.initState();
-    getDataCity();
+    getTopDestination();
   }
 
   @override
@@ -104,7 +106,12 @@ class _TopDestinationState extends State<TopDestination> {
                             )
                           ]),
                       child: GestureDetector(
-                        onTap: () => {},
+                        onTap: () => Get.to(DetailDestination(
+            nameDestination: getDataTopDestination.name_destination,
+            descDestination: getDataTopDestination.desc_destination,
+            imgHeaderDetail: getDataTopDestination.photo,
+            destinationId: getDataTopDestination.id,
+            statusResp: widget.getStatusResp)),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: Image.network(

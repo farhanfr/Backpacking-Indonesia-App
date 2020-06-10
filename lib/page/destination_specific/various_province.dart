@@ -1,19 +1,60 @@
+import 'dart:convert';
+
+import 'package:backpacking_indonesia/model/province_model.dart';
 import 'package:backpacking_indonesia/page/destination_specific/list_city.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
-class VariousProvince extends StatelessWidget {
-  final List data;
-  final List<String> images;
-  // final List<String> nameProvince;
+class VariousProvince extends StatefulWidget {
   final String title;
+  final int zoneId;
   final double imageHeight;
   final double imageWidth;
   VariousProvince(
       {this.title,
       this.imageHeight,
-      this.imageWidth,
-      this.data, this.images});
+      this.imageWidth, this.zoneId,
+      });
+
+  @override
+  _VariousProvinceState createState() => _VariousProvinceState();
+}
+
+class _VariousProvinceState extends State<VariousProvince> {
+
+  List<ProvinceModel> _list = [];
+  var loading = false;
+  var getStatusResp = 0;
+  Future<Null> getDataCity() async {
+    // print("CEKKK FUTURE CITY MODEL ${widget.index}");
+    final response = await http.get(
+        "http://192.168.1.5:8000/api/v1/province/get/province/zone/?zone_id=${widget.zoneId}");
+    // Map<String, dynamic> map = json.decode(response.body);
+    // List<dynamic> data = map["data"];
+    setState(() { 
+      loading = true;
+    });
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      for (Map i in data) {
+        _list.add(ProvinceModel.fromJson(i));
+      }
+      setState(() {
+        loading = false;
+        getStatusResp = response.statusCode;
+      });
+    } else {
+      print("GAGAL");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDataCity();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +66,7 @@ class VariousProvince extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                title,
+                widget.title,
                 style: TextStyle(
                     fontSize: 20.0,
                     fontFamily: "Poppins",
@@ -47,11 +88,12 @@ class VariousProvince extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 15.0),
             // scrollDirection: Ax,
-            itemCount: data.length,
+            itemCount: _list.length,
             itemBuilder: (BuildContext context, int index) {
               // print("CEKK ID PROVISI PADA VARIOUS PROVINCE ${data[index]['id']}");
+              final getDataProv = _list[index];
               return Container(
-                height: imageHeight,
+                height: widget.imageHeight,
                 margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
@@ -66,12 +108,12 @@ class VariousProvince extends StatelessWidget {
                 child: Stack(
                   children: <Widget>[
                     GestureDetector(
-                      onTap: () => Get.to(ListCity(provinceId: data[index]['id'])),
+                      onTap: () => Get.to(ListCity(provinceId: getDataProv.id,)),
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
-                          child: Image.network("http://192.168.1.5:8000/img/${data[index]['photo']}",
+                          child: Image.network("http://192.168.1.5:8000/img/${getDataProv.photo}",
                           fit: BoxFit.cover,
                           )
                         ),
@@ -82,7 +124,7 @@ class VariousProvince extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 20.0),
-                        child: Text(data[index]['name_province'],
+                        child: Text(getDataProv.name_province,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,

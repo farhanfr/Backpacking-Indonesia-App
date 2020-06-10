@@ -33,6 +33,7 @@ class _DetailDestinationState extends State<DetailDestination> {
   void initState() {
     super.initState();
     _checkInData();
+    print("VARIOUS DESTNATION 3 ${widget.statusResp}");
   }
   @override
   Widget build(BuildContext context) {

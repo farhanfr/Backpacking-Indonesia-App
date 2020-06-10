@@ -1,63 +1,38 @@
-import 'package:backpacking_indonesia/page/destination_specific/list_province.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:async';
-import 'dart:convert';
+class ProvinceModel{
+  final int id;
+  final int zone_id;
+  final String name_province;
+  final String photo;
+  final Zone zone;
 
-import 'package:shared_preferences/shared_preferences.dart';
-
-class ProvinceModel extends StatefulWidget {
-  @override
-  _ProvinceModelState createState() => _ProvinceModelState();
-}
-
-class _ProvinceModelState extends State<ProvinceModel> {
-  int id = -1;
-
-  @override
-  void initState() {
-    super.initState();
-    getZoneId();
-  }
-
-  getZoneId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      id = (prefs.getInt("IndexChooseZone"));
-    });
-  }
-
-  Future<List> getDataProvince() async {
-    final response = await http.get(
-        "http://192.168.1.5:8000/api/v1/province/get/province/zone/?zone_id=$id");
-    Map<String, dynamic> map = json.decode(response.body);
-    List<dynamic> data = map["data"];
-    return data;
-  }
-
-  Future<List> topProvince() async {
-    final response = await http.get(
-        "http://192.168.1.5:8000/api/v1/city/get/city/province/?province_id=1");
-    Map<String, dynamic> map = json.decode(response.body);
-    List<dynamic> data = map["data"];
-    return data;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List>(
-      future: Future.wait([getDataProvince(),topProvince()]),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) print(snapshot.error);
-        print(snapshot.data);
-        return snapshot.hasData
-            ? ListItemProvince(list: snapshot.data[0],list2: snapshot.data[1])
-            : Center(
-                child: CircularProgressIndicator(),
-              );
-      },
-    );
+  ProvinceModel({this.id, this.zone_id, this.name_province, this.photo, this.zone,});
+  
+  factory ProvinceModel.fromJson(Map<String,dynamic> json){
+      return new ProvinceModel(
+        id:json['id'],
+        zone_id:json['zone_id'],
+        name_province:json['name_province'],
+        photo: json['photo'],
+        zone: Zone.fromJson(json['zone'])
+      );
   }
 }
 
+class Zone{
+  final int id;
+  final int zone_id;
+  final String name_province;
+  final String photo;
 
+  Zone({this.id, this.zone_id, this.name_province, this.photo});
+
+  factory Zone.fromJson(Map <String,dynamic> json){
+      return new Zone(
+        id:json['id'],
+        zone_id:json['zone_id'],
+        name_province:json['name_province'],
+        photo: json['photo']
+      );
+  }
+
+}

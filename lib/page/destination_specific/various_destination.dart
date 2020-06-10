@@ -13,12 +13,12 @@ class VariousDestination extends StatefulWidget {
   final String title;
   final double imageHeight;
   final double imageWidth;
-  final int cityId;
+  final int cityId,getStatusResp;
   VariousDestination(
       {this.title,
       this.imageHeight,
       this.imageWidth,
-      this.dataDestination, this.cityId,
+      this.dataDestination, this.cityId, this.getStatusResp,
       });
 
   @override
@@ -58,11 +58,14 @@ class _VariousDestinationState extends State<VariousDestination> {
   void initState() {
     super.initState();
     getDataCity();
+    print("VARIOUS DESTNATION 2 ${widget.getStatusResp}");
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return 
+    // loading ? Center(child: CircularProgressIndicator()) :
+    Column(
       children: <Widget>[
         Padding(
           padding: EdgeInsets.only(left: 20.0, bottom: 15.0),
@@ -113,9 +116,11 @@ class _VariousDestinationState extends State<VariousDestination> {
                   children: <Widget>[
                     GestureDetector(
                       onTap: () => Get.to(DetailDestination(
-                        // nameDestination: widget.nameDestination,
-                        // newDestination: widget.images,
-                        // index: index,
+                        nameDestination: x.name_destination,
+                        descDestination: x.desc_destination,
+                        imgHeaderDetail: x.photo,
+                        destinationId: x.id,
+                        statusResp: widget.getStatusResp
                       )),
                       child: Container(
                         width: MediaQuery.of(context).size.width,
@@ -133,7 +138,7 @@ class _VariousDestinationState extends State<VariousDestination> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 20.0),
-                        child: Text(x.city.name_city,
+                        child: Text(x.name_destination,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:backpacking_indonesia/data/dump_data.dart';
 import 'package:backpacking_indonesia/model/destination_model.dart';
-import 'package:backpacking_indonesia/model/destination_services.dart';
 import 'package:backpacking_indonesia/page/destination_specific/top_destination.dart';
 import 'package:backpacking_indonesia/page/destination_specific/various_destination.dart';
 import 'package:backpacking_indonesia/page/detail_destination.dart';
@@ -97,9 +96,7 @@ class _ListDestinationState extends State<ListDestination> {
                   ],
                 ),
                 child: Center(
-                  child:  Hero(
-                    tag: "new_destination",
-                                      child: ClipRRect(
+                  child:   ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: Image(
                             image: AssetImage(newDestination[index]),
@@ -107,7 +104,7 @@ class _ListDestinationState extends State<ListDestination> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                  ),
+                  
                 ),
               ),
             ),
@@ -132,6 +129,7 @@ class _ListDestinationState extends State<ListDestination> {
 
   @override
   Widget build(BuildContext context) {
+    print("VARIOUS DESTNATION 1 $getStatusResp");
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -182,12 +180,14 @@ class _ListDestinationState extends State<ListDestination> {
           title: "Top 5 Destination",
           imageHeight: 200.0,
           imageWidth: 300.0,
+          getStatusResp: getStatusResp,
         ),
         SizedBox(height: 20.0),
         VariousDestination(
           title: "List of Destination",
           imageHeight: 150.0,
           cityId: widget.cityId,
+          getStatusResp: getStatusResp,
         )
       ]),
     );

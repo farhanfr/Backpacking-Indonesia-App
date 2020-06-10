@@ -1,5 +1,3 @@
-import 'package:backpacking_indonesia/data/dump_data.dart';
-import 'package:backpacking_indonesia/model/city_model.dart';
 import 'package:backpacking_indonesia/page/destination_specific/top_city.dart';
 import 'package:backpacking_indonesia/page/destination_specific/various_city.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +10,6 @@ class ListCity extends StatefulWidget {
 }
 
 class _ListCityState extends State<ListCity> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,17 +19,7 @@ class _ListCityState extends State<ListCity> {
         elevation: 0.0,
         iconTheme: new IconThemeData(color: Colors.black),
       ),
-      body: CityModel(index: widget.provinceId)
-    );
-  }
-}
-
-class ListItemCity extends StatelessWidget {
-  final List listCity;
-  ListItemCity({this.listCity});
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
+      body: SingleChildScrollView(
               child: Container(
           child: Column(
             children: <Widget>[
@@ -52,24 +39,28 @@ class ListItemCity extends StatelessWidget {
               ),
               SearchEngineCity(),
               TopCity(
-                images: topCity,
-                nameCity: nameCity,
+                // images: topCity,
+                // nameCity: nameCity,
                 title: "Top 5 City",
                 imageHeight: 200.0,
                 imageWidth: 300.0,
+                province_id: widget.provinceId
               ),
               SizedBox(height: 20.0),
               VariousCity(
                 title: "List of City",
                 imageHeight: 150.0,
-                dataCity: listCity,
+                provinceId: widget.provinceId,
               )
             ],
           ),
         ),
-      );
+      )
+    );
   }
 }
+
+
 
 class SearchEngineCity extends StatefulWidget {
   @override
