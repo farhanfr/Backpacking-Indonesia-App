@@ -1,3 +1,4 @@
+import 'package:backpacking_indonesia/page/destination_specific/search_result_province.dart';
 import 'package:backpacking_indonesia/page/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

@@ -9,11 +9,16 @@ import 'package:http/http.dart' as http;
 class TopDestination extends StatefulWidget {
   // final List<String> images;
   // final List<String> nameDestination;
-  final int cityId,getStatusResp;
+  final int cityId, getStatusResp;
   final String title;
   final double imageHeight;
   final double imageWidth;
-  TopDestination({this.title, this.imageHeight, this.imageWidth, this.cityId, this.getStatusResp});
+  TopDestination(
+      {this.title,
+      this.imageHeight,
+      this.imageWidth,
+      this.cityId,
+      this.getStatusResp});
 
   @override
   _TopDestinationState createState() => _TopDestinationState();
@@ -82,61 +87,63 @@ class _TopDestinationState extends State<TopDestination> {
         ),
         Container(
           height: widget.imageHeight,
-          child: 
-          loading ? Center(child: CircularProgressIndicator()) : 
-          ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 15.0),
-              scrollDirection: Axis.horizontal,
-              itemCount: _list.length,
-              itemBuilder: (BuildContext context, int index) {
-                final getDataTopDestination = _list[index];
-                return Stack(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: 10.0, vertical: 20.0),
-                      width: widget.imageWidth,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black54,
-                              offset: Offset(0.0, 4.0),
-                              blurRadius: 6.0,
-                            )
-                          ]),
-                      child: GestureDetector(
-                        onTap: () => Get.to(DetailDestination(
-            nameDestination: getDataTopDestination.name_destination,
-            descDestination: getDataTopDestination.desc_destination,
-            imgHeaderDetail: getDataTopDestination.photo,
-            destinationId: getDataTopDestination.id,
-            statusResp: widget.getStatusResp)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.network(
-                            "http://192.168.1.5:8000/img/${getDataTopDestination.photo}",
-                            fit: BoxFit.cover,
+          child: loading
+              ? Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 15.0),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _list.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final getDataTopDestination = _list[index];
+                    return Stack(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 20.0),
+                          width: widget.imageWidth,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black54,
+                                  offset: Offset(0.0, 4.0),
+                                  blurRadius: 6.0,
+                                )
+                              ]),
+                          child: GestureDetector(
+                            onTap: () => Get.to(DetailDestination(
+                                nameDestination:
+                                    getDataTopDestination.name_destination,
+                                descDestination:
+                                    getDataTopDestination.desc_destination,
+                                imgHeaderDetail: getDataTopDestination.photo,
+                                destinationId: getDataTopDestination.id,
+                                statusResp: widget.getStatusResp)),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Image.network(
+                                "http://192.168.1.5:8000/img/${getDataTopDestination.photo}",
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 30.0, vertical: 40.0),
-                        child: Text(getDataTopDestination.name_destination,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Poppins")),
-                      ),
-                    ),
-                  ],
-                );
-              }),
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 30.0, vertical: 40.0),
+                            child: Text(getDataTopDestination.name_destination,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Poppins")),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
         )
       ],
     );

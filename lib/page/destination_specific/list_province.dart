@@ -1,7 +1,10 @@
 
+import 'package:backpacking_indonesia/page/destination_specific/list_city.dart';
+import 'package:backpacking_indonesia/page/destination_specific/search_result_province.dart';
 import 'package:backpacking_indonesia/page/destination_specific/top_province.dart';
 import 'package:backpacking_indonesia/page/destination_specific/various_province.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ListProvince extends StatefulWidget {
@@ -85,6 +88,10 @@ class SearchEngineProvince extends StatefulWidget {
 }
 
 class _SearchEngineProvinceState extends State<SearchEngineProvince> {
+
+  var nameProvince = "";
+  TextEditingController searchProvController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -109,7 +116,16 @@ class _SearchEngineProvinceState extends State<SearchEngineProvince> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
-                textInputAction: TextInputAction.send,
+                controller:searchProvController ,
+                textInputAction: TextInputAction.search,
+                onSubmitted:(String nameProvinceParams){
+                  setState(() {
+                    nameProvince = nameProvinceParams;
+                    searchProvController.text="";
+                    print(nameProvinceParams);
+                  });
+                  Get.to(SearchResultProvince(nameProvince: nameProvince));
+                },
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "Search the province ..."),
