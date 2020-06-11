@@ -1,28 +1,26 @@
 import 'dart:convert';
 
-import 'package:backpacking_indonesia/model/province_model.dart';
-import 'package:backpacking_indonesia/page/destination_specific/list_city.dart';
+import 'package:backpacking_indonesia/model/city_model.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-class SearchResultProvince extends StatefulWidget {
-  final String nameProvince;
-  final int idZone;
-  SearchResultProvince({this.nameProvince, this.idZone});
+class SearchResultCity extends StatefulWidget {
+  final String nameCity;
+  final int provinceId;
+  SearchResultCity({this.nameCity, this.provinceId});
   @override
-  _SearchResultProvinceState createState() => _SearchResultProvinceState();
+  _SearchResultCityState createState() => _SearchResultCityState();
 }
 
-class _SearchResultProvinceState extends State<SearchResultProvince> {
-  List<ProvinceModel> _list = [];
+class _SearchResultCityState extends State<SearchResultCity> {
+  List<CityModel> _list = [];
   var loading = false;
   var getStatusResp = 0;
   var getNullText = false;
   Future<Null> getDataProv() async {
     // print("CEKKK FUTURE CITY MODEL ${widget.index}");
     final response = await http.get(
-        "http://192.168.1.5:8000/api/v1/province/search/?name_province=${widget.nameProvince}&zone_id=${widget.idZone}");
+        "http://192.168.1.5:8000/api/v1/city/search/?name_city=${widget.nameCity}&province_id=${widget.provinceId}");
     // Map<String, dynamic> map = json.decode(response.body);
     // List<dynamic> data = map["data"];
     setState(() {
@@ -32,7 +30,7 @@ class _SearchResultProvinceState extends State<SearchResultProvince> {
       if (response.body.isNotEmpty) {
         final data = jsonDecode(response.body);
         for (Map i in data) {
-          _list.add(ProvinceModel.fromJson(i));
+          _list.add(CityModel.fromJson(i));
         }
       } else {
         setState(() {
@@ -73,7 +71,7 @@ class _SearchResultProvinceState extends State<SearchResultProvince> {
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    "Search Province Result ....",
+                    "Search City Result ....",
                     style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Poppins",
@@ -94,7 +92,7 @@ class _SearchResultProvinceState extends State<SearchResultProvince> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: _list.length,
                           itemBuilder: (BuildContext context, int index) {
-                            final getDataProvList = _list[index];
+                            final getDataCityList = _list[index];
                             return Container(
                               height: 200.0,
                               margin: EdgeInsets.symmetric(
@@ -112,14 +110,14 @@ class _SearchResultProvinceState extends State<SearchResultProvince> {
                               child: Stack(
                                 children: <Widget>[
                                   GestureDetector(
-                                    onTap: () => Get.to(ListCity(provinceId: getDataProvList.id)),
+                                    onTap: (){},
                                     child: Container(
                                       width: MediaQuery.of(context).size.width,
                                       child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(10.0),
                                           child: Image.network(
-                                            "http://192.168.1.5:8000/img/${getDataProvList.photo}",
+                                            "http://192.168.1.5:8000/img/${getDataCityList.photo}",
                                             fit: BoxFit.cover,
                                           )),
                                     ),
@@ -129,7 +127,7 @@ class _SearchResultProvinceState extends State<SearchResultProvince> {
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 30.0, vertical: 20.0),
-                                      child: Text(getDataProvList.name_province,
+                                      child: Text(getDataCityList.name_city,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20.0,

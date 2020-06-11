@@ -30,7 +30,7 @@ class _TopDestinationState extends State<TopDestination> {
   Future<Null> getTopDestination() async {
     // print("CEKKK FUTURE CITY MODEL ${widget.index}");
     final response = await http.get(
-        "http://192.168.1.5:8000/api/v1/city/get/destination/city/?city_id=${widget.cityId}");
+        "http://192.168.1.5:8000/api/v1/destination/get/destination/city/?city_id=${widget.cityId}");
     // Map<String, dynamic> map = json.decode(response.body);
     // List<dynamic> data = map["data"];
     setState(() {

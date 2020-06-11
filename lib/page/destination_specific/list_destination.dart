@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:backpacking_indonesia/data/dump_data.dart';
 import 'package:backpacking_indonesia/model/destination_model.dart';
+import 'package:backpacking_indonesia/page/destination_specific/search_result_destination.dart';
 import 'package:backpacking_indonesia/page/destination_specific/top_destination.dart';
 import 'package:backpacking_indonesia/page/destination_specific/various_destination.dart';
 import 'package:backpacking_indonesia/page/detail_destination.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,7 +27,7 @@ class _ListDestinationState extends State<ListDestination> {
   Future<Null> getDataCity() async {
     // print("CEKKK FUTURE CITY MODEL ${widget.index}");
     final response = await http.get(
-        "http://192.168.1.5:8000/api/v1/city/get/destination/city/?city_id=${widget.cityId}");
+        "http://192.168.1.5:8000/api/v1/destination/get/destination/city/?city_id=${widget.cityId}");
     // Map<String, dynamic> map = json.decode(response.body);
     // List<dynamic> data = map["data"];
     setState(() {
@@ -152,7 +154,7 @@ class _ListDestinationState extends State<ListDestination> {
             ),
           ),
         ),
-        SearchEngineDestination(),
+        SearchEngineDestination(cityId: widget.cityId),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: Text("New Destination",
@@ -195,12 +197,16 @@ class _ListDestinationState extends State<ListDestination> {
 }
 
 class SearchEngineDestination extends StatefulWidget {
+  final int cityId;
+  SearchEngineDestination({this.cityId});
   @override
   _SearchEngineDestinationState createState() =>
       _SearchEngineDestinationState();
 }
 
 class _SearchEngineDestinationState extends State<SearchEngineDestination> {
+  var nameDestination = "";
+  TextEditingController searchDestinationController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -225,7 +231,24 @@ class _SearchEngineDestinationState extends State<SearchEngineDestination> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
-                textInputAction: TextInputAction.send,
+                controller: searchDestinationController,
+                textInputAction: TextInputAction.search,
+                onSubmitted: (String nameDestinationParams) {
+                  setState(() {
+                    nameDestination = nameDestinationParams;
+                    print(nameDestinationParams);
+                  });
+                  if (searchDestinationController.text.isNotEmpty) {
+                    Get.to(SearchResultDestination(nameDestination: nameDestination,cityId: widget.cityId));
+                    searchDestinationController.text = "";
+                  } else {
+                    Fluttertoast.showToast(
+                        toastLength: Toast.LENGTH_SHORT,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        msg: "Sorry, your search is empty");
+                  }
+                },
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "Search the province ..."),

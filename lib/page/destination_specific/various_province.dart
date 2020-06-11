@@ -108,7 +108,7 @@ class _VariousProvinceState extends State<VariousProvince> {
                 child: Stack(
                   children: <Widget>[
                     GestureDetector(
-                      onTap: () => Get.to(ListCity(provinceId: getDataProv.id,)),
+                      onTap: () => Get.to(ListCity(provinceId: getDataProv.id)),
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         child: ClipRRect(

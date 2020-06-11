@@ -1,6 +1,9 @@
+import 'package:backpacking_indonesia/page/destination_specific/search_result_city.dart';
 import 'package:backpacking_indonesia/page/destination_specific/top_city.dart';
 import 'package:backpacking_indonesia/page/destination_specific/various_city.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 
 class ListCity extends StatefulWidget {
   final int provinceId;
@@ -37,7 +40,7 @@ class _ListCityState extends State<ListCity> {
                   ),
                 ),
               ),
-              SearchEngineCity(),
+              SearchEngineCity(provinceId: widget.provinceId),
               TopCity(
                 // images: topCity,
                 // nameCity: nameCity,
@@ -60,14 +63,16 @@ class _ListCityState extends State<ListCity> {
   }
 }
 
-
-
 class SearchEngineCity extends StatefulWidget {
+  final int provinceId;
+  SearchEngineCity({this.provinceId});
   @override
   _SearchEngineCityState createState() => _SearchEngineCityState();
 }
 
 class _SearchEngineCityState extends State<SearchEngineCity> {
+  var nameCity = "";
+  TextEditingController searchCityController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -92,7 +97,24 @@ class _SearchEngineCityState extends State<SearchEngineCity> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
-                textInputAction: TextInputAction.send,
+                controller: searchCityController,
+                textInputAction: TextInputAction.search,
+                onSubmitted: (String nameCityParams) {
+                  setState(() {
+                    nameCity = nameCityParams;
+                    print(nameCityParams);
+                  });
+                  if (searchCityController.text.isNotEmpty) {
+                    Get.to(SearchResultCity(nameCity: nameCity,provinceId: widget.provinceId,));
+                    searchCityController.text = "";
+                  } else {
+                    Fluttertoast.showToast(
+                        toastLength: Toast.LENGTH_SHORT,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        msg: "Sorry, your search is empty");
+                  }
+                },
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "Search the city ..."),
