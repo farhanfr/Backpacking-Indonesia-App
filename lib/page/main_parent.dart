@@ -1,9 +1,12 @@
+import 'package:backpacking_indonesia/page/auth/login.dart';
 import 'package:backpacking_indonesia/page/choose_zone.dart';
 import 'package:backpacking_indonesia/page/destination_fast/search_destination_fast.dart';
 import 'package:backpacking_indonesia/page/destination_specific/search_destination_spesific.dart';
+import 'package:backpacking_indonesia/storing/shared_pref.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainParent extends StatefulWidget {
   @override
@@ -11,16 +14,53 @@ class MainParent extends StatefulWidget {
 }
 
 class _MainParentState extends State<MainParent> {
-  
+
   static int index = 0,statusMenu=0;
   List<Widget> list = [SearchDestinationSpesific(), SearchDestinationFast()];
 
+  var loading = true;
+  var nameUserPref="";
+  var tokenUser ="";
+  var isLogin = false;
+  _getNameUserWithToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nameUserPref = (prefs.getString("nameUser"));
+      tokenUser = (prefs.getString("token"));
+      loading = false;
+    });
+  }
+
+  _checkTokenUser(){
+    if (tokenUser == " ") {
+      setState(() {
+        isLogin = false;
+      });
+      print("KOSONG");
+    }else{
+      setState(() {
+        isLogin = true;
+      });
+      print("GK KSONG");
+    }
+  }
+
+@override
+  void initState() {
+    super.initState();
+    _getNameUserWithToken();
+    _checkTokenUser();
+    // print(tokenUser);
+    // print(isLogin);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
+      home:
+      loading ? Center(child: CircularProgressIndicator()) :
+       Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 0.0,
@@ -29,7 +69,7 @@ class _MainParentState extends State<MainParent> {
           title: Text("Navigation Drawer2"),
         ),
         body: list[index],
-        drawer: MyDrawer(selected: statusMenu, onTap: (ctx, i) {
+        drawer: MyDrawer(selected: statusMenu,nameUserPref:nameUserPref,isLogin:isLogin ,onTap: (ctx, i) {
           setState(() {
             index = i;
             statusMenu = i;
@@ -43,10 +83,11 @@ class _MainParentState extends State<MainParent> {
 
 class MyDrawer extends StatelessWidget {
   final Function onTap;
-
   final int selected;
+  final String nameUserPref;
+  final bool isLogin;
 
-  MyDrawer({this.selected,this.onTap});
+  MyDrawer({this.selected,this.onTap,this.nameUserPref, this.isLogin});
   
 
   @override
@@ -75,7 +116,8 @@ class MyDrawer extends StatelessWidget {
                     ),
                     SizedBox(height: 15),
                     Text(
-                      "React's Chan",
+                     nameUserPref
+                      ,
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -119,8 +161,13 @@ class MyDrawer extends StatelessWidget {
             ))),
             ListTile(
               leading: Icon(Icons.settings),
-              title: Text("Settings"),
-              // onTap: ()=>onTap(context,1)
+              title: Text("Logout Sementara"),
+              onTap: (){
+                SharedPref().removeValues("idUser");
+                SharedPref().removeValues("nameUser");
+                SharedPref().removeValues("token");
+                Get.to(Login());
+              }
             ),
             ListTile(
               leading: Icon(Icons.exit_to_app),

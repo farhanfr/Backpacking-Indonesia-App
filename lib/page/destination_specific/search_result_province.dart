@@ -22,7 +22,7 @@ class _SearchResultProvinceState extends State<SearchResultProvince> {
   Future<Null> getDataProv() async {
     // print("CEKKK FUTURE CITY MODEL ${widget.index}");
     final response = await http.get(
-        "http://192.168.1.5:8000/api/v1/province/search/?name_province=${widget.nameProvince}&zone_id=${widget.idZone}");
+        "http://192.168.1.7:8000/api/v1/province/search/?name_province=${widget.nameProvince}&zone_id=${widget.idZone}");
     // Map<String, dynamic> map = json.decode(response.body);
     // List<dynamic> data = map["data"];
     setState(() {
@@ -119,7 +119,7 @@ class _SearchResultProvinceState extends State<SearchResultProvince> {
                                           borderRadius:
                                               BorderRadius.circular(10.0),
                                           child: Image.network(
-                                            "http://192.168.1.5:8000/img/${getDataProvList.photo}",
+                                            "http://192.168.1.7:8000/img/${getDataProvList.photo}",
                                             fit: BoxFit.cover,
                                           )),
                                     ),

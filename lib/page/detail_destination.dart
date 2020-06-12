@@ -57,7 +57,7 @@ class _DetailDestinationState extends State<DetailDestination> {
                     clipper: CircularClipper(),
                     shadow: Shadow(blurRadius: 20.0),
                     child: Image.network(
-                       "http://192.168.1.5:8000/img/${widget.imgHeaderDetail}",
+                       "http://192.168.1.7:8000/img/${widget.imgHeaderDetail}",
                       height: 400.0,
                       width: double.infinity,
                       fit: BoxFit.cover,

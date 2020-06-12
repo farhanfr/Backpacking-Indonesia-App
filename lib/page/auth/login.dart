@@ -1,8 +1,12 @@
 import 'dart:convert';
 
 import 'package:backpacking_indonesia/model/user_model.dart';
+import 'package:backpacking_indonesia/page/first_open.dart';
+import 'package:backpacking_indonesia/storing/shared_pref.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -13,15 +17,22 @@ class _LoginState extends State<Login> {
   TextEditingController usernameInp = new TextEditingController();
   TextEditingController passwordInp = new TextEditingController();
 
-  List<UserModel> _list = [];
   Future<Null> login() async {
-    final response = await http.post("http://192.168.1.5:8000/api/v1/user/login", body: {"username": usernameInp.text, "password": passwordInp.text});;
+    final response = await http.post("http://192.168.1.7:8000/api/v1/user/login", body: {"username": usernameInp.text, "password": passwordInp.text});;
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      UserModel userModel = new UserModel.fromJson(data);
-      print(userModel.data.secret);
-
+      UserModel userModel = new UserModel.fromJson(data); 
+      if (userModel.status == true) {
+        SharedPref().addIntToSF("idUser", userModel.data.user.id);
+        SharedPref().addStringToSF("nameUser", userModel.data.user.name_user);
+        SharedPref().addStringToSF("token", userModel.data.user.token);
+        Get.off(FirstOpen());
+        print("BERHASIL LOGIN TOKEN : ${userModel.data.user.token}");
+      }
+      else{
+        print("gagal login");
+      }
     } 
   }
 
@@ -63,7 +74,7 @@ class _LoginState extends State<Login> {
                         fontSize: 28.0,
                         fontWeight: FontWeight.bold)),
               ),
-              SizedBox(height: 50.0),
+              SizedBox(height: 30.0),
               TextField(
                 controller: usernameInp,
                 decoration: InputDecoration(

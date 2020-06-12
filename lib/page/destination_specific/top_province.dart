@@ -28,7 +28,7 @@ class _TopProvinceState extends State<TopProvince> {
   Future<Null> getDataTopProv() async {
     // print("CEKKK FUTURE CITY MODEL ${widget.index}");
     final response = await http.get(
-        "http://192.168.1.5:8000/api/v1/province/get/province/zone/?zone_id=${widget.zoneId}");
+        "http://192.168.1.7:8000/api/v1/province/get/province/zone/?zone_id=${widget.zoneId}");
     // Map<String, dynamic> map = json.decode(response.body);
     // List<dynamic> data = map["data"];
     setState(() {
@@ -115,7 +115,7 @@ class _TopProvinceState extends State<TopProvince> {
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(10.0),
                             child: Image.network(
-                              "http://192.168.1.5:8000/img/${getDataTopProv.photo}",
+                              "http://192.168.1.7:8000/img/${getDataTopProv.photo}",
                               fit: BoxFit.cover,
                             )
                             ),

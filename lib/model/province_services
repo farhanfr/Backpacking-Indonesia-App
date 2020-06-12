@@ -29,7 +29,7 @@ class _ProvinceModelState extends State<ProvinceModel> {
 
   Future<List> getDataProvince() async {
     final response = await http.get(
-        "http://192.168.1.5:8000/api/v1/province/get/province/zone/?zone_id=$id");
+        "http://192.168.1.7:8000/api/v1/province/get/province/zone/?zone_id=$id");
     Map<String, dynamic> map = json.decode(response.body);
     List<dynamic> data = map["data"];
     return data;
@@ -37,7 +37,7 @@ class _ProvinceModelState extends State<ProvinceModel> {
 
   Future<List> topProvince() async {
     final response = await http.get(
-        "http://192.168.1.5:8000/api/v1/city/get/city/province/?province_id=1");
+        "http://192.168.1.7:8000/api/v1/city/get/city/province/?province_id=1");
     Map<String, dynamic> map = json.decode(response.body);
     List<dynamic> data = map["data"];
     return data;

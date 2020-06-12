@@ -26,7 +26,7 @@ class _VariousCityState extends State<VariousCity> {
   Future<Null> getDataCity() async {
     // print("CEKKK FUTURE CITY MODEL ${widget.index}");
     final response = await http.get(
-        "http://192.168.1.5:8000/api/v1/city/get/city/province/?province_id=${widget.provinceId}");
+        "http://192.168.1.7:8000/api/v1/city/get/city/province/?province_id=${widget.provinceId}");
     // Map<String, dynamic> map = json.decode(response.body);
     // List<dynamic> data = map["data"];
     setState(() {
@@ -110,7 +110,7 @@ class _VariousCityState extends State<VariousCity> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: Image.network(
-                            "http://192.168.1.5:8000/img/${getDataCity.photo}",
+                            "http://192.168.1.7:8000/img/${getDataCity.photo}",
                             fit: BoxFit.cover,
                           ),
                         ),
