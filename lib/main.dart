@@ -1,4 +1,4 @@
-import 'package:backpacking_indonesia/page/destination_specific/search_result_province.dart';
+import 'package:backpacking_indonesia/page/auth/login.dart';
 import 'package:backpacking_indonesia/page/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SplashScreen(),
+      home: Login(),
     );
   }
 }
