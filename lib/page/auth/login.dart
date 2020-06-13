@@ -4,6 +4,7 @@ import 'package:backpacking_indonesia/model/user_model.dart';
 import 'package:backpacking_indonesia/page/first_open.dart';
 import 'package:backpacking_indonesia/storing/shared_pref.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,22 +19,46 @@ class _LoginState extends State<Login> {
   TextEditingController passwordInp = new TextEditingController();
 
   Future<Null> login() async {
-    final response = await http.post("http://192.168.1.7:8000/api/v1/user/login", body: {"username": usernameInp.text, "password": passwordInp.text});;
+    if (usernameInp.text == "" || passwordInp.text == "") {
+      Fluttertoast.showToast(
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          msg: "Username and password can't be empty");
+    } else {
+      final response = await http.post(
+          "http://192.168.1.7:8000/api/v1/user/login",
+          body: {"username": usernameInp.text, "password": passwordInp.text});
+      
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      UserModel userModel = new UserModel.fromJson(data); 
-      if (userModel.status == true) {
-        SharedPref().addIntToSF("idUser", userModel.data.user.id);
-        SharedPref().addStringToSF("nameUser", userModel.data.user.name_user);
-        SharedPref().addStringToSF("token", userModel.data.user.token);
-        Get.off(FirstOpen());
-        print("BERHASIL LOGIN TOKEN : ${userModel.data.user.token}");
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        UserModel userModel = new UserModel.fromJson(data);
+        if (userModel.status == true) {
+          SharedPref().addIntToSF("idUser", userModel.data.user.id);
+          SharedPref().addStringToSF("nameUser", userModel.data.user.name_user);
+          SharedPref().addStringToSF("token", userModel.data.user.token);
+          SharedPref().addBoolToSF("isLogin", true);
+          Fluttertoast.showToast(
+              toastLength: Toast.LENGTH_SHORT,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              msg: "Success Login");
+          Future.delayed(Duration(seconds: 3), () {
+            Get.off(FirstOpen());
+          });
+
+          print("BERHASIL LOGIN TOKEN : ${userModel.data.user.token}");
+        } else {
+          Fluttertoast.showToast(
+              toastLength: Toast.LENGTH_SHORT,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              msg: "Sorry, username or password is wrong");
+          print("gagal login");
+        }
       }
-      else{
-        print("gagal login");
-      }
-    } 
+    }
   }
 
   @override
@@ -125,9 +150,10 @@ class _LoginState extends State<Login> {
               ButtonTheme(
                 minWidth: MediaQuery.of(context).size.width,
                 height: 50.0,
-                child: RaisedButton(
+                child: RaisedButton.icon(
+                    icon: CircularProgressIndicator(),
                     color: Colors.red[600],
-                    child: Text(
+                    label: Text(
                       "Login",
                       style: TextStyle(color: Colors.white),
                     ),

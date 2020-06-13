@@ -27,35 +27,21 @@ class _MainParentState extends State<MainParent> {
     setState(() {
       nameUserPref = (prefs.getString("nameUser"));
       tokenUser = (prefs.getString("token"));
+      isLogin = (prefs.getBool("isLogin"));
       loading = false;
     });
-  }
-
-  _checkTokenUser(){
-    if (tokenUser == " ") {
-      setState(() {
-        isLogin = false;
-      });
-      print("KOSONG");
-    }else{
-      setState(() {
-        isLogin = true;
-      });
-      print("GK KSONG");
-    }
   }
 
 @override
   void initState() {
     super.initState();
     _getNameUserWithToken();
-    _checkTokenUser();
-    // print(tokenUser);
-    // print(isLogin);
   }
 
   @override
+  // print(tokenUser);
   Widget build(BuildContext context) {
+    print(tokenUser);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home:
@@ -116,8 +102,8 @@ class MyDrawer extends StatelessWidget {
                     ),
                     SizedBox(height: 15),
                     Text(
-                     nameUserPref
-                      ,
+                    isLogin == null? "Guest" : "Guest2" 
+                    ,
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -149,8 +135,13 @@ class MyDrawer extends StatelessWidget {
               color: selected == 1 ? Colors.red[100] : Colors.transparent,
               child: ListTile(
                 leading: Icon(Icons.flash_on),
-                title: Text("Search Destination Faster"),
+                title: Text("Search Destination Quick"),
                 onTap: () => onTap(context, 1)),
+            ),
+             ListTile(
+              leading: Icon(Icons.arrow_back),
+              title: Text("Back to choose zone"),
+              onTap: ()=>Get.to(ChooseZone())
             ),
             Divider(height: 1),
             Padding(padding: EdgeInsets.all(15),
@@ -161,19 +152,34 @@ class MyDrawer extends StatelessWidget {
             ))),
             ListTile(
               leading: Icon(Icons.settings),
-              title: Text("Logout Sementara"),
+              title: Text("Settings"),
+              // onTap: (){
+              //   SharedPref().removeValues("idUser");
+              //   SharedPref().removeValues("nameUser");
+              //   SharedPref().removeValues("token");
+              //   SharedPref().removeValues("isLogin");
+              //   Get.to(Login());
+              // }
+            ),
+            isLogin == null ? ListTile(
+              leading: Icon(Icons.account_circle),
+              title: Text("Login"),
+              onTap: (){
+                Get.to(Login());
+              }
+            ) :
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text("Logout"),
               onTap: (){
                 SharedPref().removeValues("idUser");
                 SharedPref().removeValues("nameUser");
                 SharedPref().removeValues("token");
+                SharedPref().removeValues("isLogin");
                 Get.to(Login());
               }
             ),
-            ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text("Back to choose zone"),
-              onTap: ()=>Get.to(ChooseZone())
-            ),
+           
           ],
         ),
       ),
