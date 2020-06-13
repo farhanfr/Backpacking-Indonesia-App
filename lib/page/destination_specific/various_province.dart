@@ -83,6 +83,7 @@ class _VariousProvinceState extends State<VariousProvince> {
             ],
           ),
         ),
+        loading ? Center(child: CircularProgressIndicator()) :
         ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),

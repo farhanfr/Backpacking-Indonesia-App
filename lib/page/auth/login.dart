@@ -58,6 +58,9 @@ class _LoginState extends State<Login> {
           print("gagal login");
         }
       }
+      else{
+        print("RESPONS GAGA;");
+      }
     }
   }
 
@@ -150,10 +153,9 @@ class _LoginState extends State<Login> {
               ButtonTheme(
                 minWidth: MediaQuery.of(context).size.width,
                 height: 50.0,
-                child: RaisedButton.icon(
-                    icon: CircularProgressIndicator(),
+                child: RaisedButton(
                     color: Colors.red[600],
-                    label: Text(
+                    child: Text(
                       "Login",
                       style: TextStyle(color: Colors.white),
                     ),

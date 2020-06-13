@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:backpacking_indonesia/model/user_model.dart';
 import 'package:backpacking_indonesia/page/auth/login.dart';
 import 'package:backpacking_indonesia/page/choose_zone.dart';
 import 'package:backpacking_indonesia/page/destination_fast/search_destination_fast.dart';
@@ -7,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class MainParent extends StatefulWidget {
   @override
@@ -14,13 +18,12 @@ class MainParent extends StatefulWidget {
 }
 
 class _MainParentState extends State<MainParent> {
-
-  static int index = 0,statusMenu=0;
+  static int index = 0, statusMenu = 0;
   List<Widget> list = [SearchDestinationSpesific(), SearchDestinationFast()];
 
   var loading = true;
-  var nameUserPref="";
-  var tokenUser ="";
+  var nameUserPref = "";
+  var tokenUser = "";
   var isLogin = false;
   _getNameUserWithToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -32,7 +35,7 @@ class _MainParentState extends State<MainParent> {
     });
   }
 
-@override
+  @override
   void initState() {
     super.initState();
     _getNameUserWithToken();
@@ -44,25 +47,29 @@ class _MainParentState extends State<MainParent> {
     print(tokenUser);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home:
-      loading ? Center(child: CircularProgressIndicator()) :
-       Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0.0,
-          iconTheme: new IconThemeData(color: Colors.black),
-          backgroundColor: Colors.white,
-          title: Text("Navigation Drawer2"),
-        ),
-        body: list[index],
-        drawer: MyDrawer(selected: statusMenu,nameUserPref:nameUserPref,isLogin:isLogin ,onTap: (ctx, i) {
-          setState(() {
-            index = i;
-            statusMenu = i;
-            Navigator.pop(ctx);
-          });
-        }),
-      ),    
+      home: loading
+          ? Center(child: CircularProgressIndicator())
+          : Scaffold(
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                elevation: 0.0,
+                iconTheme: new IconThemeData(color: Colors.black),
+                backgroundColor: Colors.white,
+                title: Text("Navigation Drawer2"),
+              ),
+              body: list[index],
+              drawer: MyDrawer(
+                  selected: statusMenu,
+                  nameUserPref: nameUserPref,
+                  isLogin: isLogin,
+                  onTap: (ctx, i) {
+                    setState(() {
+                      index = i;
+                      statusMenu = i;
+                      Navigator.pop(ctx);
+                    });
+                  }),
+            ),
     );
   }
 }
@@ -73,8 +80,29 @@ class MyDrawer extends StatelessWidget {
   final String nameUserPref;
   final bool isLogin;
 
-  MyDrawer({this.selected,this.onTap,this.nameUserPref, this.isLogin});
-  
+  Future<Null> logout() async {
+    final response = await http
+        .put("http://192.168.1.7:8000/api/v1/user/logout", body: {"id": "1"});
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      UserModel userModel = new UserModel.fromJson(data);
+      if (userModel.status == true) {
+        print(userModel.message);
+        SharedPref().removeValues("idUser");
+        SharedPref().removeValues("nameUser");
+        SharedPref().removeValues("token");
+        SharedPref().removeValues("isLogin");
+        Get.to(Login());
+      } else {
+        print("gagal login");
+      }
+    } else {
+      print("RESPONS GAGA;");
+    }
+  }
+
+  MyDrawer({this.selected, this.onTap, this.nameUserPref, this.isLogin});
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +130,7 @@ class MyDrawer extends StatelessWidget {
                     ),
                     SizedBox(height: 15),
                     Text(
-                    isLogin == null? "Guest" : "Guest2" 
-                    ,
+                      isLogin == null ? "Guest" : nameUserPref,
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -118,38 +145,39 @@ class MyDrawer extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(padding: EdgeInsets.all(15),
-            child: Text("Main Menu",style: TextStyle(
-              color: Colors.grey[500],
-              fontSize: 14,
-              fontWeight: FontWeight.bold
-            ))),
+            Padding(
+                padding: EdgeInsets.all(15),
+                child: Text("Main Menu",
+                    style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold))),
             Container(
               color: selected == 0 ? Colors.red[100] : Colors.transparent,
               child: ListTile(
-                leading: Icon(Icons.search),
-                title: Text("Search Destination Spesific"),
-                onTap: () => onTap(context, 0)),
+                  leading: Icon(Icons.search),
+                  title: Text("Search Destination Spesific"),
+                  onTap: () => onTap(context, 0)),
             ),
             Container(
               color: selected == 1 ? Colors.red[100] : Colors.transparent,
               child: ListTile(
-                leading: Icon(Icons.flash_on),
-                title: Text("Search Destination Quick"),
-                onTap: () => onTap(context, 1)),
+                  leading: Icon(Icons.flash_on),
+                  title: Text("Search Destination Quick"),
+                  onTap: () => onTap(context, 1)),
             ),
-             ListTile(
-              leading: Icon(Icons.arrow_back),
-              title: Text("Back to choose zone"),
-              onTap: ()=>Get.to(ChooseZone())
-            ),
+            ListTile(
+                leading: Icon(Icons.arrow_back),
+                title: Text("Back to choose zone"),
+                onTap: () => Get.to(ChooseZone())),
             Divider(height: 1),
-            Padding(padding: EdgeInsets.all(15),
-            child: Text("Other's Menu",style: TextStyle(
-              color: Colors.grey[500],
-              fontSize: 14,
-              fontWeight: FontWeight.bold
-            ))),
+            Padding(
+                padding: EdgeInsets.all(15),
+                child: Text("Other's Menu",
+                    style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold))),
             ListTile(
               leading: Icon(Icons.settings),
               title: Text("Settings"),
@@ -161,25 +189,19 @@ class MyDrawer extends StatelessWidget {
               //   Get.to(Login());
               // }
             ),
-            isLogin == null ? ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text("Login"),
-              onTap: (){
-                Get.to(Login());
-              }
-            ) :
-            ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text("Logout"),
-              onTap: (){
-                SharedPref().removeValues("idUser");
-                SharedPref().removeValues("nameUser");
-                SharedPref().removeValues("token");
-                SharedPref().removeValues("isLogin");
-                Get.to(Login());
-              }
-            ),
-           
+            isLogin == null
+                ? ListTile(
+                    leading: Icon(Icons.account_circle),
+                    title: Text("Login"),
+                    onTap: () {
+                      Get.to(Login());
+                    })
+                : ListTile(
+                    leading: Icon(Icons.exit_to_app),
+                    title: Text("Logout"),
+                    onTap: () {
+                      logout();
+                    }),
           ],
         ),
       ),

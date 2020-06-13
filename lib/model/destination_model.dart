@@ -16,19 +16,23 @@
 //   }
 // }
 
+import 'dart:convert';
+
 class DestinationModel{
   final int id;
+  final int zone_id;
   final int city_id;
   final String name_destination;
   final String desc_destination;
   final String photo;
   final City city;
 
-  DestinationModel({this.id, this.city_id, this.name_destination, this.desc_destination, this.photo, this.city});
+  DestinationModel({this.id, this.zone_id, this.city_id, this.name_destination, this.desc_destination, this.photo, this.city});
   
   factory DestinationModel.fromJson(Map <String,dynamic> json){
       return new DestinationModel(
         id:json['id'],
+        zone_id: json['zone_id'],
         city_id:json['city_id'],
         name_destination:json['name_destination'],
         desc_destination: json['desc_destination'],

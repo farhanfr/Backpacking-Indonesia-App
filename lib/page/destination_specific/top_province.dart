@@ -31,19 +31,23 @@ class _TopProvinceState extends State<TopProvince> {
         "http://192.168.1.7:8000/api/v1/province/get/province/zone/?zone_id=${widget.zoneId}");
     // Map<String, dynamic> map = json.decode(response.body);
     // List<dynamic> data = map["data"];
-    setState(() {
+    if (this.mounted) {
+      setState(() {
       loading = true;
-    });
+    });  
+    }
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
       for (Map i in data) {
         _list.add(ProvinceModel.fromJson(i));
       }
+      if (this.mounted) {
       setState(() {
         loading = false;
         getStatusResp = response.statusCode;
       });
+      }
       print(data);
     } else {
       print("GAGAL");

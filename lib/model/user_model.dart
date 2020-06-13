@@ -12,7 +12,15 @@ class UserModel {
         status: json['status'],
         message: json['message'],
       );
-    } else {
+    } 
+    else if(json['message'] == "success logout"){
+      var msgSucArr = [];
+      msgSucArr.add(json['message']);
+      return UserModel(
+          status: json['status'],
+          message: msgSucArr);
+    }
+    else {
       var msgSucArr = [];
       msgSucArr.add(json['message']);
       return UserModel(
