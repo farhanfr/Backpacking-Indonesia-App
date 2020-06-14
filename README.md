@@ -1,6 +1,8 @@
 # backpacking_indonesia
 
-A new Flutter project.
+## Preview App:
+
+![First open app](assets/images/preview1.jpg)
 
 ## Getting Started
 
