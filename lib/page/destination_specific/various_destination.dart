@@ -120,6 +120,7 @@ class _VariousDestinationState extends State<VariousDestination> {
                         descDestination: x.desc_destination,
                         imgHeaderDetail: x.photo,
                         destinationId: x.id,
+                        cityId: widget.cityId,
                         statusResp: widget.getStatusResp
                       )),
                       child: Container(
@@ -138,7 +139,7 @@ class _VariousDestinationState extends State<VariousDestination> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 20.0),
-                        child: Text(x.name_destination,
+                        child: Text(x.name_destination.toString(),
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,
