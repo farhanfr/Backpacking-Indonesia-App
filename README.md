@@ -2,7 +2,7 @@
 
 ## Preview App:
 
-![First open app](assets/images/preview1.jpg)
+<img src="assets/images/preview1.jpg" width="150">
 
 ## Getting Started
 
