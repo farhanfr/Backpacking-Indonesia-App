@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:backpacking_indonesia/data/dump_data.dart';
+import 'package:backpacking_indonesia/model/destination_comment_model.dart';
+import 'package:backpacking_indonesia/model/destination_model.dart';
 import 'package:backpacking_indonesia/page/various_subdestination.dart';
 import 'package:backpacking_indonesia/page/widget/circullar_clipper.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class DetailDestination extends StatefulWidget {
   final String imgHeaderDetail,nameDestination,descDestination;  
@@ -29,9 +34,34 @@ class _DetailDestinationState extends State<DetailDestination> {
     }
   }
 
+  List<DestinationCommentModel> _list = [];
+  Future<Null> getComment() async {
+      final response = await http.get(
+          "http://192.168.1.7:8000/api/v1/comment/destination/get/?city_id=3&destination_id=1");
+    
+      setState(() {
+      loading = true;
+    });
+
+      if (response.statusCode == 200) {
+        final data = [jsonDecode(response.body)];
+        for (Map data in data) {
+          _list.add(DestinationCommentModel.fromJson(data));
+        }
+        setState(() {
+      loading = false;
+    });
+        print(data);
+      }
+      else{
+        print("RESPONS GAGA;");
+      }
+  }
+  
   @override
   void initState() {
     super.initState();
+    getComment();
     _checkInData();
     print("VARIOUS DESTNATION 3 ${widget.statusResp}");
   }
@@ -144,6 +174,17 @@ class _DetailDestinationState extends State<DetailDestination> {
                     ],
                   ),
                 ),
+                loading ? Center(child: CircularProgressIndicator()) :
+                ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _list.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final getDataDestinationList = _list[index];
+                            return Container(
+                              child: Text(getDataDestinationList.data[index].comment),
+                            );
+                          })
               ],
             ),
           )
