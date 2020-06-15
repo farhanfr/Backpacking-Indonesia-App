@@ -31,6 +31,10 @@ class DestinationCommentModel {
       return DestinationCommentModel(
           status: json["status"], message: json["message"]);
     }
+    else if (json["message"] == "Success to add comment") {
+      return DestinationCommentModel(
+          status: json["status"], message: json["message"]);
+    }
     return DestinationCommentModel(
       status: json["status"],
       message: json["message"],

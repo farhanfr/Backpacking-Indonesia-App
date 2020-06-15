@@ -6,12 +6,14 @@ import 'package:backpacking_indonesia/model/destination_model.dart';
 import 'package:backpacking_indonesia/page/various_subdestination.dart';
 import 'package:backpacking_indonesia/page/widget/circullar_clipper.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailDestination extends StatefulWidget {
   final String imgHeaderDetail, nameDestination, descDestination;
-  final int destinationId, statusResp,cityId;
+  final int destinationId, statusResp, cityId;
 
   DetailDestination(
       {Key key,
@@ -19,7 +21,8 @@ class DetailDestination extends StatefulWidget {
       this.nameDestination,
       this.descDestination,
       this.destinationId,
-      this.statusResp, this.cityId})
+      this.statusResp,
+      this.cityId})
       : super(key: key);
 
   @override
@@ -27,7 +30,7 @@ class DetailDestination extends StatefulWidget {
 }
 
 class _DetailDestinationState extends State<DetailDestination> {
-
+  TextEditingController commentCon = new TextEditingController();
 
   var loading = false;
   _checkInData() {
@@ -41,11 +44,11 @@ class _DetailDestinationState extends State<DetailDestination> {
     }
   }
 
-
   List<DestinationCommentModel> _list = [];
+  bool isNullDataComment = false;
   Future<Null> getComment() async {
     final response = await http.get(
-        "http://192.168.1.7:8000/api/v1/comment/destination/get/?city_id=3&destination_id=${widget.destinationId}");
+        "http://192.168.1.7:8000/api/v1/comment/destination/get/?city_id=${widget.cityId}&destination_id=${widget.destinationId}");
 
     setState(() {
       loading = true;
@@ -57,6 +60,9 @@ class _DetailDestinationState extends State<DetailDestination> {
       }
       setState(() {
         loading = false;
+        if (_list[0].message == "comment is empty") {
+          isNullDataComment = true;
+        }
       });
       print(data);
     } else {
@@ -64,14 +70,137 @@ class _DetailDestinationState extends State<DetailDestination> {
     }
   }
 
+  var idUser = 0;
+   _getIdUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      idUser = (prefs.getInt("idUser"));
+    });
+  }
+
+  Future<Null> addComment() async {
+    if (commentCon.text == "") {
+      Fluttertoast.showToast(
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          msg: "comment can't null");
+    } else {
+      final response = await http.post(
+          "http://192.168.1.7:8000/api/v1/comment/destination/add",
+          body: {
+            "city_id": widget.cityId.toString(),
+            "user_id": idUser.toString(),
+            "comment": commentCon.text,
+            "destination_id": widget.destinationId.toString()
+          });
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        DestinationCommentModel addComment =
+            new DestinationCommentModel.fromJson(data);
+        if (addComment.status == true) {
+          Navigator.pop(context,true);
+          print(addComment.message);
+        }
+      } else {
+        print("RESPONS GAGA;");
+      }
+    }
+  }
+
+  void modalAddComment() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)), //this right here
+            child: Container(
+              height: 500,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: ListView(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: commentCon,
+                      maxLines: null,
+                      keyboardType: TextInputType.multiline,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'add your comment'),
+                    ),
+                    SizedBox(
+                      width: 320.0,
+                      child: RaisedButton(
+                        onPressed: () {
+                          addComment();
+                        },
+                        child: Text(
+                          "Add comment",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        color: Colors.red[600],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  commentList(BuildContext context, int index) {
+    return Container(
+      padding: EdgeInsets.all(20.0),
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                width: 40.0,
+                height: 40.0,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/hanzo.jpg"),
+                        fit: BoxFit.fill)),
+              ),
+              Padding(
+                  padding: EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    "Farhan Fitrahtur",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )),
+            ],
+          ),
+          SizedBox(height: 10.0),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(_list[0].data[index].commentDate),
+          ),
+          SizedBox(height: 20.0),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(_list[0].data[index].comment,
+                maxLines: 4, overflow: TextOverflow.ellipsis),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    _getIdUser();
     getComment();
     _checkInData();
     print("VARIOUS DESTNATION 3 ${widget.statusResp}");
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -125,121 +254,99 @@ class _DetailDestinationState extends State<DetailDestination> {
                 ),
                 Container(
                   // transform: Matrix4.translationValues(0.0, -30.0, 0.0),
-                  child: Column(
-                    children: <Widget>[
-                      Text(widget.nameDestination,
-                          style: TextStyle(
-                              fontFamily: "Poppins",
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold)),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Text(
-                            widget.descDestination,
-                            textAlign: TextAlign.justify,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                              fontSize: 16,
-                            ),
-                          )),
-                      SizedBox(
-                        height: 40.0,
-                      ),
-                      VariousSubDestination(
-                        images: subDestination,
-                        nameSubDestination: nameSubDestination,
-                        title: "Gallery",
-                        imageHeight: 200.0,
-                        imageWidth: 300.0,
-                      ),
-                      SizedBox(
-                        height: 30.0,
-                      ),
-                      Padding(
+                  child: Column(children: <Widget>[
+                    Text(widget.nameDestination,
+                        style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Comment",
-                              style: TextStyle(
-                                  fontFamily: "Poppins",
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold),
+                        child: Text(
+                          widget.descDestination,
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 16,
+                          ),
+                        )),
+                    SizedBox(
+                      height: 40.0,
+                    ),
+                    VariousSubDestination(
+                      images: subDestination,
+                      nameSubDestination: nameSubDestination,
+                      title: "Gallery",
+                      imageHeight: 200.0,
+                      imageWidth: 300.0,
+                    ),
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            "Comment",
+                            style: TextStyle(
+                                fontFamily: "Poppins",
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              modalAddComment();
+                            },
+                            child: Icon(
+                              Icons.add_comment,
+                              color: Colors.black,
+                              size: 30.0,
                             ),
-                            GestureDetector(
-                              onTap: () {},
-                              child: Icon(
-                                Icons.add_comment,
-                                color: Colors.black,
-                                size: 30.0,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      loading
-                          ? Center(child: CircularProgressIndicator())
-                          : _list.length == 0 ? Text("Comment is empty") : _list[0].message == "comment is empty" ? Text("Comment is empty") :
-                          // Text("Comment is empty2")
-                          ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: _list[0].message == "comment is empty" ? 0 : _list[0].data.length,
-                              itemBuilder: 
-                              (BuildContext context, int index) {
-                                final getDataDestinationList = _list[0].data[index];
-                                print(_list[0].data.length);
-                                return Container(
-                                  padding: EdgeInsets.all(20.0),
-                                  child: 
-                                  Column(
-                                    children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: 40.0,
-                                            height: 40.0,
-                                            decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                image: DecorationImage(
-                                                    image: AssetImage(
-                                                        "assets/images/hanzo.jpg"),
-                                                    fit: BoxFit.fill)),
-                                          ),
-                                          Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 10.0),
-                                              child: Text(
-                                                "Farhan Fitrahtur",
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )),
-                                        ],
-                                      ),
-                                      SizedBox(height: 10.0),
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                            getDataDestinationList.commentDate),
-                                      ),
-                                      SizedBox(height: 20.0),
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                            getDataDestinationList.comment,
-                                            maxLines: 4,overflow: TextOverflow.ellipsis,),
-                                      )
-                                    ],
-                                  ),
-                                );
-                              })
-                    ]
-                  ),
+                    ),
+                    loading
+                        ? Center(child: CircularProgressIndicator())
+                        : _list.length == 0
+                            ? Text("Comment is empty")
+                            : _list[0].message == "comment is empty"
+                                ? Text("Comment is empty")
+                                :
+                                // Text("Comment is empty2")
+                                ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount:
+                                        _list[0].message == "comment is empty"
+                                            ? 0
+                                            : _list[0].data.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      // final getDataDestinationList =
+                                      //     _list[0].data[index];
+                                      print(_list[0].data.length);
+                                      return commentList(context, index);
+                                    }),
+                    isNullDataComment == true
+                        ? Visibility(child: Text("Hidden"), visible: false)
+                        : Center(
+                            child: InkWell(
+                            child: Text("See all comments",
+                                style: TextStyle(
+                                    color: Colors.red, fontSize: 15.0)),
+                            onTap: () {},
+                          )),
+                    SizedBox(
+                      height: 20.0,
+                    )
+                  ]),
                 )
               ],
             ),
