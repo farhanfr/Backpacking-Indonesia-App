@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:backpacking_indonesia/data/dump_data.dart';
 import 'package:backpacking_indonesia/model/destination_comment_model.dart';
 import 'package:backpacking_indonesia/model/destination_model.dart';
+import 'package:backpacking_indonesia/page/destination_specific/add_comment_destination.dart';
 import 'package:backpacking_indonesia/page/various_subdestination.dart';
 import 'package:backpacking_indonesia/page/widget/circullar_clipper.dart';
 import 'package:flutter/material.dart';
@@ -78,83 +79,11 @@ class _DetailDestinationState extends State<DetailDestination> {
     });
   }
 
-  Future<Null> addComment() async {
-    if (commentCon.text == "") {
-      Fluttertoast.showToast(
-          toastLength: Toast.LENGTH_SHORT,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          msg: "comment can't null");
-    } else {
-      final response = await http.post(
-          "http://192.168.1.7:8000/api/v1/comment/destination/add",
-          body: {
-            "city_id": widget.cityId.toString(),
-            "user_id": idUser.toString(),
-            "comment": commentCon.text,
-            "destination_id": widget.destinationId.toString()
-          });
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        DestinationCommentModel addComment =
-            new DestinationCommentModel.fromJson(data);
-        if (addComment.status == true) {
-          Navigator.pop(context,true);
-          print(addComment.message);
-        }
-      } else {
-        print("RESPONS GAGA;");
-      }
-    }
-  }
-
-  void modalAddComment() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0)), //this right here
-            child: Container(
-              height: 500,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: ListView(
-                  // mainAxisAlignment: MainAxisAlignment.center,
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: commentCon,
-                      maxLines: null,
-                      keyboardType: TextInputType.multiline,
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'add your comment'),
-                    ),
-                    SizedBox(
-                      width: 320.0,
-                      child: RaisedButton(
-                        onPressed: () {
-                          addComment();
-                        },
-                        child: Text(
-                          "Add comment",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        color: Colors.red[600],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
+  
 
   commentList(BuildContext context, int index) {
     return Container(
+      key: PageStorageKey('test'),
       padding: EdgeInsets.all(20.0),
       child: Column(
         children: <Widget>[
@@ -300,7 +229,15 @@ class _DetailDestinationState extends State<DetailDestination> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              modalAddComment();
+                             Get.to(AddCommentDestination(
+                                nameDestination: widget.nameDestination,
+                                descDestination: widget.descDestination,
+                                imgHeaderDetail: widget.imgHeaderDetail,
+                                destinationId: widget.destinationId,
+                                cityId: widget.cityId,
+                                statusResp: widget.statusResp,
+                                idUser: idUser,
+                             ));
                             },
                             child: Icon(
                               Icons.add_comment,
@@ -321,12 +258,13 @@ class _DetailDestinationState extends State<DetailDestination> {
                                 // Text("Comment is empty2")
                                 ListView.builder(
                                     shrinkWrap: true,
+                                    key: PageStorageKey('test'),
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     itemCount:
                                         _list[0].message == "comment is empty"
                                             ? 0
-                                            : _list[0].data.length,
+                                            : _list[0].data.length >= 1 &&  _list[0].data.length <= 5 ? _list[0].data.length : 5,
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       // final getDataDestinationList =
