@@ -7,9 +7,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
 class AddCommentDestination extends StatefulWidget {
   final String imgHeaderDetail, nameDestination, descDestination;
   final int destinationId, statusResp, cityId, idUser;
+  
   AddCommentDestination(
       {this.imgHeaderDetail,
       this.nameDestination,
@@ -24,6 +26,8 @@ class AddCommentDestination extends StatefulWidget {
 
 class _AddCommentDestinationState extends State<AddCommentDestination> {
   TextEditingController commentCon = new TextEditingController();
+
+  
 
   Future<Null> addComment() async {
     if (commentCon.text == "") {
@@ -47,14 +51,25 @@ class _AddCommentDestinationState extends State<AddCommentDestination> {
         DestinationCommentModel addComment =
             new DestinationCommentModel.fromJson(data);
         if (addComment.status == true) {
-          Get.to(DetailDestination(
-            nameDestination: widget.nameDestination,
-                        descDestination: widget.descDestination,
-                        imgHeaderDetail: widget.imgHeaderDetail,
-                        destinationId: widget.destinationId,
-                        cityId: widget.cityId,
-                        statusResp: widget.statusResp
-          ));
+          // Get.to(DetailDestination(
+          //   nameDestination: widget.nameDestination,
+          //               descDestination: widget.descDestination,
+          //               imgHeaderDetail: widget.imgHeaderDetail,
+          //               destinationId: widget.destinationId,
+          //               cityId: widget.cityId,
+          //               statusResp: widget.statusResp
+          // ));
+          // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+          //   return DetailDestination(nameDestination: widget.nameDestination,
+          //               descDestination: widget.descDestination,
+          //               imgHeaderDetail: widget.imgHeaderDetail,
+          //               destinationId: widget.destinationId,
+          //               cityId: widget.cityId,
+          //               statusResp: widget.statusResp);
+          // }));
+          Navigator.pop(context,(){
+            setState(() {});
+          });
           print(addComment.message);
         }
       } else {
@@ -66,6 +81,7 @@ class _AddCommentDestinationState extends State<AddCommentDestination> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldState,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,

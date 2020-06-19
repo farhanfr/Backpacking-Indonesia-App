@@ -24,7 +24,7 @@ class _ListDestinationState extends State<ListDestination> {
   List<DestinationModel> _list = [];
   var loading = false;
   var getStatusResp = 0;
-  Future<Null> getDataCity() async {
+ Future<Null> getDataCity() async {
     // print("CEKKK FUTURE CITY MODEL ${widget.index}");
     final response = await http.get(
         "http://192.168.1.7:8000/api/v1/destination/get/destination/city/?city_id=${widget.cityId}");

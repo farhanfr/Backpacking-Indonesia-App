@@ -1,3 +1,4 @@
+import 'package:backpacking_indonesia/page/detail_destination.dart';
 import 'package:backpacking_indonesia/page/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,6 +31,9 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: SplashScreen(),
+      routes: <String, WidgetBuilder> {
+    '/test': (BuildContext context) => new DetailDestination(),
+  },
     );
   }
 }

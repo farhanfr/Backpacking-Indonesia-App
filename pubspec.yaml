@@ -30,6 +30,7 @@ dependencies:
   back_button_interceptor: ^4.2.4
   fluttertoast: ^4.0.1
   json_serializable: ^3.3.0
+  pull_to_refresh: ^1.5.7
 
   
 

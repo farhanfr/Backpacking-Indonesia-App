@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:backpacking_indonesia/data/dump_data.dart';
 import 'package:backpacking_indonesia/model/destination_comment_model.dart';
 import 'package:backpacking_indonesia/model/destination_model.dart';
 import 'package:backpacking_indonesia/page/destination_specific/add_comment_destination.dart';
+import 'package:backpacking_indonesia/page/first_open.dart';
 import 'package:backpacking_indonesia/page/various_subdestination.dart';
 import 'package:backpacking_indonesia/page/widget/circullar_clipper.dart';
+import 'package:backpacking_indonesia/page/widget/randomString.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -32,6 +35,97 @@ class DetailDestination extends StatefulWidget {
 
 class _DetailDestinationState extends State<DetailDestination> {
   TextEditingController commentCon = new TextEditingController();
+Future<Null> addComment() async {
+    if (commentCon.text == "") {
+      Fluttertoast.showToast(
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          msg: "comment can't null");
+    } else {
+      final response = await http.post(
+          "http://192.168.1.7:8000/api/v1/comment/destination/add",
+          body: {
+            "city_id": widget.cityId.toString(),
+            "user_id": 1.toString(),
+            "comment": commentCon.text,
+            "destination_id": widget.destinationId.toString()
+          });
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        DestinationCommentModel addComment =
+            new DestinationCommentModel.fromJson(data);
+        if (addComment.status == true) {
+          // Get.off(DetailDestination(
+          //   nameDestination: widget.nameDestination,
+          //               descDestination: widget.descDestination,
+          //               imgHeaderDetail: widget.imgHeaderDetail,
+          //               destinationId: widget.destinationId,
+          //               cityId: widget.cityId,
+          //               statusResp: widget.statusResp
+          // ));
+          // Get.off(DetailDestination());
+          setState(() {
+            getComment();
+            Navigator.pop(context,true);
+          });
+          
+          print(addComment.message);
+        }
+      } else {
+        print("RESPONS GAGA;");
+      }
+    }
+  }
+
+void modalAddComment() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)), //this right here
+            child: Container(
+              height: 500,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: ListView(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: commentCon,
+                      maxLines: null,
+                      keyboardType: TextInputType.multiline,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'add your comment'),
+                    ),
+                    SizedBox(
+                      width: 320.0,
+                      child: RaisedButton(
+                        onPressed: () {
+                          setState(() {
+                            addComment();  
+                          });
+                          
+                        },
+                        child: Text(
+                          "Add comment",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        color: Colors.red[600],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
 
   var loading = false;
   _checkInData() {
@@ -50,6 +144,7 @@ class _DetailDestinationState extends State<DetailDestination> {
   Future<Null> getComment() async {
     final response = await http.get(
         "http://192.168.1.7:8000/api/v1/comment/destination/get/?city_id=${widget.cityId}&destination_id=${widget.destinationId}");
+
 
     setState(() {
       loading = true;
@@ -79,48 +174,7 @@ class _DetailDestinationState extends State<DetailDestination> {
     });
   }
 
-  
 
-  commentList(BuildContext context, int index) {
-    return Container(
-      key: PageStorageKey('test'),
-      padding: EdgeInsets.all(20.0),
-      child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                width: 40.0,
-                height: 40.0,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: AssetImage("assets/images/hanzo.jpg"),
-                        fit: BoxFit.fill)),
-              ),
-              Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: Text(
-                    "Farhan Fitrahtur",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  )),
-            ],
-          ),
-          SizedBox(height: 10.0),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(_list[0].data[index].commentDate),
-          ),
-          SizedBox(height: 20.0),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(_list[0].data[index].comment,
-                maxLines: 4, overflow: TextOverflow.ellipsis),
-          )
-        ],
-      ),
-    );
-  }
 
   @override
   void initState() {
@@ -182,6 +236,7 @@ class _DetailDestinationState extends State<DetailDestination> {
                   ],
                 ),
                 Container(
+                  key: Key(randomString(20)),
                   // transform: Matrix4.translationValues(0.0, -30.0, 0.0),
                   child: Column(children: <Widget>[
                     Text(widget.nameDestination,
@@ -229,15 +284,16 @@ class _DetailDestinationState extends State<DetailDestination> {
                           ),
                           GestureDetector(
                             onTap: () {
-                             Get.to(AddCommentDestination(
-                                nameDestination: widget.nameDestination,
-                                descDestination: widget.descDestination,
-                                imgHeaderDetail: widget.imgHeaderDetail,
-                                destinationId: widget.destinationId,
-                                cityId: widget.cityId,
-                                statusResp: widget.statusResp,
-                                idUser: idUser,
-                             ));
+                            //  Get.to(AddCommentDestination(
+                            //     nameDestination: widget.nameDestination,
+                            //     descDestination: widget.descDestination,
+                            //     imgHeaderDetail: widget.imgHeaderDetail,
+                            //     destinationId: widget.destinationId,
+                            //     cityId: widget.cityId,
+                            //     statusResp: widget.statusResp,
+                            //     idUser: idUser,
+                            //  ));
+                            modalAddComment();
                             },
                             child: Icon(
                               Icons.add_comment,
@@ -258,7 +314,7 @@ class _DetailDestinationState extends State<DetailDestination> {
                                 // Text("Comment is empty2")
                                 ListView.builder(
                                     shrinkWrap: true,
-                                    key: PageStorageKey('test'),
+                                    key: UniqueKey(),
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     itemCount:
@@ -270,7 +326,7 @@ class _DetailDestinationState extends State<DetailDestination> {
                                       // final getDataDestinationList =
                                       //     _list[0].data[index];
                                       print(_list[0].data.length);
-                                      return commentList(context, index);
+                                       return CommentList(index: index,key: UniqueKey(),list: _list,);
                                     }),
                     isNullDataComment == true
                         ? Visibility(child: Text("Hidden"), visible: false)
@@ -288,6 +344,61 @@ class _DetailDestinationState extends State<DetailDestination> {
                 )
               ],
             ),
+    );
+  }
+}
+
+class CommentList extends StatefulWidget {
+  final List list;
+  int index;
+  CommentList({
+    Key key, this.list, this.index, 
+  }) :  super(key: key);
+
+  @override
+  _CommentListState createState() => _CommentListState();
+}
+
+class _CommentListState extends State<CommentList> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: widget.key,
+      padding: EdgeInsets.all(20.0),
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                width: 40.0,
+                height: 40.0,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/hanzo.jpg"),
+                        fit: BoxFit.fill)),
+              ),
+              Padding(
+                  padding: EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    "Farhan Fitrahtur",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )),
+            ],
+          ),
+          SizedBox(height: 10.0),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(widget.list[0].data[widget.index].commentDate),
+          ),
+          SizedBox(height: 20.0),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(widget.list[0].data[widget.index].comment,
+                maxLines: 4, overflow: TextOverflow.ellipsis),
+          )
+        ],
+      ),
     );
   }
 }
